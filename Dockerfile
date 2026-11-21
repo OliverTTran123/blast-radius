@@ -8,5 +8,5 @@ FROM python:3.13-slim@sha256:e48f59cdba69a3cbd9ed2cf0f348d90d45a8d350d98134cf107
 # also give 644 to the directories it creates, and nobody could not enter them.
 RUN mkdir -p /app/map && chmod 755 /app /app/map
 COPY --chmod=644 selector.py /app/selector.py
-COPY --chmod=644 map/index.json map/files.bin map/sets.bin /app/map/
+COPY --chmod=644 map/index.json map/files.bin map/sets.bin map/sources.bin /app/map/
 CMD ["python", "/app/selector.py"]

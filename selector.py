@@ -3,38 +3,48 @@
 Reads /data/commits/*.patch and /data/tests.json and prints, for every patch,
 the tests to run and how to split them over workers. It decides from a map
 built ahead of time from the pinned sqlglot commit (map/, made by
-tools/build_map): which tests executed each statement, which tests ran any
-line of each file, and which tests opened each file under tests/. It never
-runs sqlglot, and the kind of edit a patch makes is never looked at: only
-where it is.
+tools/build_map): the source itself, which tests executed each statement,
+which tests ran any line of each file, and which tests opened each file under
+tests/. It never runs sqlglot and holds no table from patches to tests: it
+applies the patch to the pinned source and asks the map who ran what changed.
 
 How a changed path is handled:
 
-  sqlglot/**/*.py  Each changed or deleted old line goes to the innermost
-                   statement that owns it and selects the tests that executed
-                   that statement. A statement that runs at import time (module
-                   level, a class body, a def header) selects every test that
-                   ran any line of the file, and so does a statement that some
-                   test only reaches after other tests have run. New lines
-                   inserted between two old lines, and old lines that hold no
-                   code, select for the code on both sides. Tests that read the
-                   file as text are always selected.
+  sqlglot/**/*.py  The patch is applied to the pinned file and the two syntax
+                   trees are compared with positions left out.
+                   - Same tree (only comments, blank lines or layout changed):
+                     nothing the interpreter runs is different, so only the
+                     tests that read the file as text are selected.
+                   - The patched file does not parse: every test that ran any
+                     line of the file, because importing it now fails.
+                   - Otherwise each changed or deleted old line goes to the
+                     innermost statement that owns it and selects the tests
+                     that executed that statement. A statement that runs at
+                     import time (module level, a class body, a def header)
+                     selects every test that ran any line of the file, and so
+                     does a statement that some test only reaches after other
+                     tests have run. New lines inserted between two old lines,
+                     and old lines that hold no code, select for the code on
+                     both sides. Tests that read the file as text are added.
   tests/**         Every test that opened or imported the file, and every test
                    whose own file it is.
   anything else    Every test. So does anything this program cannot place: a
                    new, deleted or renamed file, a path the map does not know,
-                   a line beyond the mapped file, a patch it cannot parse. A
-                   miss costs 300 s, so unknown means broad.
+                   a patch that does not fit the pinned file, a patch it cannot
+                   parse. A miss costs 300 s, so unknown means broad.
 
 Only answers go to stdout. Reasons and warnings go to stderr.
 """
 
 from __future__ import annotations
 
+import ast
+import hashlib
 import json
 import os
 import re
 import sys
+import warnings
 import zlib
 
 DATA = "/data"
@@ -52,18 +62,21 @@ def log(message: str) -> None:
 
 
 class FileChange:
-    """One edited file of a patch, as old-file line numbers.
+    """One edited file of a patch.
 
-    removed   old lines that were changed or deleted
+    removed   old line numbers that were changed or deleted
     inserted  (line above, line below) around each run of purely new lines
+    hunks     (how many old lines precede the hunk, its lines as (tag, text))
+              with tag " " for context, "-" for removed and "+" for added
     """
 
-    __slots__ = ("path", "removed", "inserted")
+    __slots__ = ("path", "removed", "inserted", "hunks")
 
     def __init__(self, path: str) -> None:
         self.path = path
         self.removed: list[int] = []
         self.inserted: list[tuple[int, int]] = []
+        self.hunks: list[tuple[int, list[tuple[str, str]]]] = []
 
 
 def header_path(text: str, prefix: str) -> str | None:
@@ -108,20 +121,25 @@ def parse_patch(text: str) -> tuple[list[FileChange] | None, str]:
             new_left = 1 if match[4] is None else int(match[4])
             # With no old lines the header names the line before the insertion.
             cursor = int(match[1]) if old_left else int(match[1]) + 1
+            body: list[tuple[str, str]] = []
+            change.hunks.append((cursor - 1, body))
             removed_run: list[int] = []
             added_run = False
             index += 1
             while index < len(lines) and (old_left or new_left):
                 tag = lines[index][:1]
                 if tag == "-":
+                    body.append(("-", lines[index][1:]))
                     removed_run.append(cursor)
                     cursor += 1
                     old_left -= 1
                 elif tag == "+":
+                    body.append(("+", lines[index][1:]))
                     added_run = True
                     new_left -= 1
                 elif tag in (" ", ""):
                     # Context ends a run. An empty line is context that lost its space.
+                    body.append((" ", lines[index][1:]))
                     if removed_run:
                         change.removed.extend(removed_run)
                     elif added_run:
@@ -149,6 +167,64 @@ def parse_patch(text: str) -> tuple[list[FileChange] | None, str]:
     return changes, ""
 
 
+def apply_hunks(
+    original: list[str], hunks: list[tuple[int, list[tuple[str, str]]]]
+) -> list[str] | None:
+    """A file's lines after the hunks, or None unless every hunk fits them exactly.
+
+    original is the file split on newlines, so a file that ends with a newline
+    ends with an empty string here. No fuzz and no offsets: every context line
+    and every removed line must be the stored line at the stated place.
+    """
+    last = len(original) - (original[-1] == "")
+    patched: list[str] = []
+    position = 0
+    for start, body in hunks:
+        if not position <= start <= last:
+            return None
+        patched.extend(original[position:start])
+        position = start
+        for tag, text in body:
+            if tag == "+":
+                patched.append(text)
+                continue
+            if position >= last or original[position] != text:
+                return None
+            if tag == " ":
+                patched.append(text)
+            position += 1
+    patched.extend(original[position:])
+    return patched
+
+
+def syntax_tree(lines: list[str]) -> tuple[bool, str | None]:
+    """(whether the module parses, its syntax tree as text with positions left out).
+
+    The lines are joined and handed over as bytes, not text, so an encoding
+    declaration, or bytes that are not valid in the file's encoding, count
+    exactly as they would when Python imports the file. The tree is None when
+    the module parses but is nested too deep to write out.
+    """
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            tree = ast.parse("\n".join(lines).encode("latin-1"))
+    except (SyntaxError, ValueError, RecursionError, MemoryError):
+        return False, None
+    try:
+        return True, ast.dump(tree)  # include_attributes is False unless asked for
+    except RecursionError:
+        return True, None
+
+
+def tree_digest(tree: str | None) -> str:
+    """A fingerprint of a syntax tree's text, the same one the map builder stores.
+
+    Empty when there is no tree, which no real fingerprint equals.
+    """
+    return hashlib.sha256(tree.encode("utf-8")).hexdigest() if tree is not None else ""
+
+
 # ------------------------------------------------------------------------- map
 
 
@@ -159,13 +235,33 @@ class Map:
         self.directory = directory
         with open(os.path.join(directory, "index.json"), encoding="utf-8") as handle:
             self.index = json.load(handle)
-        if self.index["format"] != 1:
+        if self.index["format"] != 2:
             raise ValueError(f"map format {self.index['format']} is not supported")
         with open(os.path.join(directory, "files.bin"), "rb") as handle:
             self.blob = handle.read()
         self.width: int = self.index["set_bytes"]
         self.table: bytes | None = None
         self.chunks: dict[str, object] = {}
+
+    def source(self, name: str) -> tuple[list[str], str] | None:
+        """(the pinned file's lines, the fingerprint of its syntax tree), or None.
+
+        Bytes are read as Latin-1, one character a byte, so that joining the
+        lines again gives back exactly the bytes that were stored. The stored
+        fingerprint is only good for the Python that made it, because ast.dump
+        writes trees differently across versions. Under any other Python the
+        pinned file is parsed here instead.
+        """
+        where = self.index["sources"].get(name)
+        if where is None:
+            return None
+        with open(os.path.join(self.directory, "sources.bin"), "rb") as handle:
+            handle.seek(where[0])
+            packed = handle.read(where[1])
+        lines = zlib.decompress(packed).decode("latin-1").split("\n")
+        if self.index.get("tree_python") == ".".join(str(part) for part in sys.version_info[:3]):
+            return lines, where[2]
+        return lines, tree_digest(syntax_tree(lines)[1])
 
     def chunk(self, name: str):
         """The parsed chunk of that name, or None when the map has none."""
@@ -229,6 +325,7 @@ class Selector:
         self.map = Map(directory)
         self.everything = (1 << len(tests)) - 1
         self.sources: dict[str, SourceFile | None] = {}
+        self.pinned: dict[str, tuple[list[str], str] | None] = {}
         self.opens: dict[str, int] = self.map.chunk("#opens")
         self.own_file: dict[str, int] = {}
         for position, test in enumerate(tests):
@@ -260,9 +357,18 @@ class Selector:
             self.sources[path] = SourceFile(chunk) if chunk is not None else None
         return self.sources[path]
 
-    def select(self, commit: str, text: str) -> int:
+    def pinned_source(self, path: str) -> tuple[list[str], str] | None:
+        """(the pinned file's lines, the fingerprint of its syntax tree), read once."""
+        if path not in self.pinned:
+            self.pinned[path] = self.map.source(path)
+        return self.pinned[path]
+
+    def select(self, commit: str, patch: bytes) -> int:
         """The tests to run for one patch, as a bit mask over this run's tests."""
-        changes, reason = parse_patch(text)
+        # Latin-1 keeps every byte, so a hunk line can be put back exactly as it was.
+        changes, reason = parse_patch(patch.decode("latin-1"))
+        if changes is not None and len({change.path for change in changes}) < len(changes):
+            changes, reason = None, "the same file twice"
         if changes is None:
             log(f"{commit}: every test: the patch holds {reason}")
             return self.everything
@@ -279,9 +385,26 @@ class Selector:
         path = change.path
         if path.startswith("sqlglot/") and path.endswith(".py"):
             source = self.source(path)
-            if source is None:
+            pinned = self.pinned_source(path)
+            if source is None or pinned is None:
                 log(f"{commit}: every test: {path} is not in the map")
                 return None
+            patched = apply_hunks(pinned[0], change.hunks)
+            if patched is None:
+                log(f"{commit}: every test: the patch does not fit the pinned {path}")
+                return None
+            readers = self.tests(source.readers)
+            parses, tree = syntax_tree(patched)
+            if not parses:
+                part = readers | self.tests(source.any_line)
+                log(f"{commit}: {path} no longer parses: the {part.bit_count()} tests that ran it")
+                return part
+            if tree is not None and tree_digest(tree) == pinned[1]:
+                log(
+                    f"{commit}: {path} keeps its syntax tree: "
+                    f"only the {readers.bit_count()} tests that read it as text"
+                )
+                return readers
             return self.for_source(commit, path, source, change)
         if path.startswith("tests/"):
             if path not in self.opens:
@@ -413,9 +536,7 @@ def main() -> None:
         selected = everything
         if selector is not None:
             try:
-                with open(
-                    os.path.join(directory, name), encoding="utf-8", errors="replace"
-                ) as handle:
+                with open(os.path.join(directory, name), "rb") as handle:
                     selected = selector.select(commit, handle.read())
             except Exception as error:  # one odd patch must not reject the run either
                 log(f"{commit}: every test: {error!r}")

@@ -745,10 +745,933 @@
    214
   ]
  },
- "format": 1,
+ "format": 2,
  "set_bytes": 203,
  "sets": 6036,
+ "sources": {
+  "sqlglot/__init__.py": [
+   0,
+   1764,
+   "e1a99787545dbe169af7f7b3d9689689f1003619fa0be1d4779238afd7cb9183"
+  ],
+  "sqlglot/__main__.py": [
+   1764,
+   735,
+   "65582ffef936eb6ef2334a3f3cc50a18de84541e830b8091b1e9b51d64ee676e"
+  ],
+  "sqlglot/_typing.py": [
+   2499,
+   656,
+   "94994fe0b0f1be90e49b14b6b72fc6d803fcbc392c9318d92986af5997007c58"
+  ],
+  "sqlglot/anonymize.py": [
+   3155,
+   3474,
+   "1230656d4710e9e80cd9e95f9a101cb26ccb1dab390bf83956e011dffcdc0eab"
+  ],
+  "sqlglot/dialects/__init__.py": [
+   6629,
+   1683,
+   "1838190fa2c7df7239b5aadc00f9e3e243e5f7e0c4954113a4359d0f0046eff7"
+  ],
+  "sqlglot/dialects/athena.py": [
+   8312,
+   1963,
+   "6a5ba2fe8ba32bb8e6187842af5017aa20214da90ae07efd12107078508cada0"
+  ],
+  "sqlglot/dialects/bigquery.py": [
+   10275,
+   2384,
+   "744b8e967711b36c51d16389ae870b30b5bc759aafed38734138ecdc7da9c2a5"
+  ],
+  "sqlglot/dialects/clickhouse.py": [
+   12659,
+   1890,
+   "9a740e88fe02ae86ffe12694f0c2d65fd33837211e1491074b5ae2de29be83c3"
+  ],
+  "sqlglot/dialects/databricks.py": [
+   14549,
+   521,
+   "250342237770800fe95fc239a4fe1cd22cfe947f6d0cce2fb6e1342972348af3"
+  ],
+  "sqlglot/dialects/dax.py": [
+   15070,
+   261,
+   "84ecab4c5ce8b3ba8879527bba053c05273688f047bd71bbc482dbb45c623400"
+  ],
+  "sqlglot/dialects/dialect.py": [
+   15331,
+   31610,
+   "99b0f1f6ea82ab606ff866b09d149154ccf67a9553fbf21fe7529300aef36bfb"
+  ],
+  "sqlglot/dialects/doris.py": [
+   46941,
+   348,
+   "496551c17f258d812f3e2edeb7544fcfea170248ec85a1766c0c29643e9ef553"
+  ],
+  "sqlglot/dialects/dremio.py": [
+   47289,
+   642,
+   "8403fbc291684f5f44993f178e3e44b0f0f1987d89de123be6c74bcff01a69b3"
+  ],
+  "sqlglot/dialects/drill.py": [
+   47931,
+   550,
+   "3ee5dbce280cb9c62d1925b7be332437aa0044781e3c740fc3bdd189bf66c56c"
+  ],
+  "sqlglot/dialects/druid.py": [
+   48481,
+   112,
+   "768d61bc73c8b5092b3673badb76bdf52d199b1e03b69adba5cfecb45fc379c6"
+  ],
+  "sqlglot/dialects/duckdb.py": [
+   48593,
+   2090,
+   "637ec98f4225e6c5f7d81daa8f1d385b34cf80a9686101da6cc1ef89e34a7bd3"
+  ],
+  "sqlglot/dialects/dune.py": [
+   50683,
+   190,
+   "d69065889497c502255a96b17063c94ea3bdc9a765cbf5b170d9d0b66d266a1f"
+  ],
+  "sqlglot/dialects/exasol.py": [
+   50873,
+   777,
+   "1faec99b0a9923e7fba5cc7eae70673a05c396672f0ff87be7ea05469884e937"
+  ],
+  "sqlglot/dialects/fabric.py": [
+   51650,
+   936,
+   "0bf2ff24d6d80160146c0500f92e72bc51af26e0f349fd490b956ec067a2647e"
+  ],
+  "sqlglot/dialects/hive.py": [
+   52586,
+   1680,
+   "e70f825fda81a0db1943a082a1f4502552c59a1b639558877a6b60d17eede55e"
+  ],
+  "sqlglot/dialects/materialize.py": [
+   54266,
+   273,
+   "87230a82f6af25123f9b659b2c9ba0359e6b59ddf2eaf2e0ef1de9c367b95e59"
+  ],
+  "sqlglot/dialects/mysql.py": [
+   54539,
+   1868,
+   "912997abdcc7ce4eff74edbf4d0e779851481a183ce289c4cd56a9ee9727f379"
+  ],
+  "sqlglot/dialects/oracle.py": [
+   56407,
+   1949,
+   "677471a207ac1c37b13b5439b58dab698e8999f9943116bf69ef33f557a10451"
+  ],
+  "sqlglot/dialects/postgres.py": [
+   58356,
+   1814,
+   "9c301790c56280f0f6e508b445826a4fd5fbe5bbf8f14a10176ac049a45f1031"
+  ],
+  "sqlglot/dialects/presto.py": [
+   60170,
+   1435,
+   "147d8d976cb487afb53f3b02f0a0df621eb57cbd7f25279c16895e2112f45008"
+  ],
+  "sqlglot/dialects/prql.py": [
+   61605,
+   323,
+   "fc1e51696850a90fdd4daaf48cff831b45a6c1c95ea7ab7780ba77bf1a013aae"
+  ],
+  "sqlglot/dialects/redshift.py": [
+   61928,
+   930,
+   "21c0ea5594d8f2ea2b40aca4b38916cd9cab0aa03b0b83566af381aee8c44b89"
+  ],
+  "sqlglot/dialects/risingwave.py": [
+   62858,
+   338,
+   "955679d913e84bca6208351953f55d86bd296b33b509b307ac6d4b91a466e9a8"
+  ],
+  "sqlglot/dialects/singlestore.py": [
+   63196,
+   880,
+   "6cc2014feea5e3c29c5d3df66b597b492d01eb68c5bf5318ae5d6d31be4b786b"
+  ],
+  "sqlglot/dialects/snowflake.py": [
+   64076,
+   2690,
+   "76c89d8b00cafe156bb0e99a1ebea19e5df0a630e151131b0d318cad909b59dc"
+  ],
+  "sqlglot/dialects/solr.py": [
+   66766,
+   300,
+   "94141293b5aab1d5a4de0c97ff9b973385ee8241c5a26e446661705d5ff3d659"
+  ],
+  "sqlglot/dialects/spark.py": [
+   67066,
+   674,
+   "9c4de25c425b6cd1066df2c44f26a7d4392209004819b82af830f35e1b5dda6d"
+  ],
+  "sqlglot/dialects/spark2.py": [
+   67740,
+   747,
+   "55134a3de4bb3a70b1b166ea9b45a52f84ab6aa16b57856b2ea560b31a98bea0"
+  ],
+  "sqlglot/dialects/sqlite.py": [
+   68487,
+   923,
+   "d938147d1fcd698aba4776e68c3d35d37af534c4eb31f81748af36c66708b12a"
+  ],
+  "sqlglot/dialects/starrocks.py": [
+   69410,
+   720,
+   "4cf071df1ee84d18d5a847852f1e1139c7b4ef08e961023963eaf2fca8e89301"
+  ],
+  "sqlglot/dialects/tableau.py": [
+   70130,
+   227,
+   "7a0bd2bae088c04384f540103620b190f663e41eddb758a2163385a5afd81b79"
+  ],
+  "sqlglot/dialects/teradata.py": [
+   70357,
+   994,
+   "f4695a42e27089f4bcb6103f4fe7fd4cbe3af6ea355fd0eef9e70e417436a991"
+  ],
+  "sqlglot/dialects/trino.py": [
+   71351,
+   398,
+   "a29796d97874d4e7e593ef0a5b393a1a35f02fc51092ca72d5532400b1d516e6"
+  ],
+  "sqlglot/dialects/tsql.py": [
+   71749,
+   1666,
+   "0941eb69aa3c398accdf5534747c1e228900d0d3580deff302bbfa9c9ba97d4e"
+  ],
+  "sqlglot/diff.py": [
+   73415,
+   4543,
+   "af8355da66d0cb95b180debc85e68d238b0512c180a25a1adc6252e162ffb6fc"
+  ],
+  "sqlglot/errors.py": [
+   77958,
+   1756,
+   "b10c8ee6823730c0033c2d4728401265154249d9ea5af7638aa3aa3bdd95f9d0"
+  ],
+  "sqlglot/executor/__init__.py": [
+   79714,
+   1063,
+   "701e673adef0a244ed87539404e2d5f87de64fd64091f3d2f8e1cdc70e3a0adc"
+  ],
+  "sqlglot/executor/context.py": [
+   80777,
+   1193,
+   "baa03f665069c9b814230a0448eba0ed9f7af8961beee75d2d8dfe0ab3d5dd50"
+  ],
+  "sqlglot/executor/env.py": [
+   81970,
+   2952,
+   "6000aa287595130746bf770e5062f48ec432b83f4d955ae304db1e99df277d80"
+  ],
+  "sqlglot/executor/python.py": [
+   84922,
+   4407,
+   "72444981bcfa62f6a082d0fdf2ad3b8464d2b11b67088c1f7a95b9901aea8695"
+  ],
+  "sqlglot/executor/table.py": [
+   89329,
+   1215,
+   "6212fe69863806ff16de47a0132a32ff2aa39502b23fb940362f86af8c907966"
+  ],
+  "sqlglot/expressions/__init__.py": [
+   90544,
+   743,
+   "4e28be907c7440a80e6d98b0532dc78c8c50d04e9bbdb91d1b8be50ff7787f91"
+  ],
+  "sqlglot/expressions/aggregate.py": [
+   91287,
+   1356,
+   "3b9d1911e7107b8533013a35239016735691b128725c48ece62850172bbc5b53"
+  ],
+  "sqlglot/expressions/array.py": [
+   92643,
+   1654,
+   "a07cb05e8afbf9b5d2bfb49e8859d29868fe72855ff0b66a91286284f70974f6"
+  ],
+  "sqlglot/expressions/builders.py": [
+   94297,
+   9063,
+   "dfdb2b8535cfc143b63816c050078ca7e143781ff4205356b44abb8f1805ea3b"
+  ],
+  "sqlglot/expressions/constraints.py": [
+   103360,
+   1105,
+   "9dd2236de7ffeef220e48067c6c67c97e3db5735e3d34740768b890e1856d9b7"
+  ],
+  "sqlglot/expressions/core.py": [
+   104465,
+   19185,
+   "4067593e47253e32f77b5e379786e1560d063ecea7f8b7c5b6a4c6c00b50d04d"
+  ],
+  "sqlglot/expressions/datatypes.py": [
+   123650,
+   2834,
+   "98c6d8a312b7098d5a67be51a9f732458088741c172597bee515317c2e25c476"
+  ],
+  "sqlglot/expressions/ddl.py": [
+   126484,
+   1937,
+   "570d61296f145af112a860715e73d55c6cee79cb717e2f9f00d5900e7d1ebcaa"
+  ],
+  "sqlglot/expressions/dml.py": [
+   128421,
+   2381,
+   "69a3d723b73fac01b53d3da8d534b683f1db12c88e42f7bb04e1f753f20c12b8"
+  ],
+  "sqlglot/expressions/functions.py": [
+   130802,
+   2411,
+   "eadd070c8e44471f901932ed306962907eed7bbef84a80264a29863bd66d2603"
+  ],
+  "sqlglot/expressions/json.py": [
+   133213,
+   1095,
+   "fb4da50bdd870b08c15186e63241407cd3b25299d1df5a9f72d69c00d7402349"
+  ],
+  "sqlglot/expressions/math.py": [
+   134308,
+   868,
+   "a9ac478acd2952a784cc78b08dd1fd205818214eae4e2622dce623f0d9d1e3bd"
+  ],
+  "sqlglot/expressions/properties.py": [
+   135176,
+   2913,
+   "8d6bb5191cd323c69646a636d9c5d46f032ecf198b30af633ccb640286910d2d"
+  ],
+  "sqlglot/expressions/query.py": [
+   138089,
+   11161,
+   "9b803d34221d2e39582722a28d945851d3cf9ecad9e09dbc32d51c93a91dfbf2"
+  ],
+  "sqlglot/expressions/string.py": [
+   149250,
+   2409,
+   "ecfa022cbe3ff2c4225bd60fcfbfc025867e3d8581ad134b2ff6764719ab530d"
+  ],
+  "sqlglot/expressions/temporal.py": [
+   151659,
+   2396,
+   "9228b823649d9ac442d140ebdb5941f6a4819a925914754fcddc871a8cde69db"
+  ],
+  "sqlglot/generator.py": [
+   154055,
+   65263,
+   "98399d86afa65566021914c515a3fdf0d77baae0a5c65730bfe33f360fea8e83"
+  ],
+  "sqlglot/generators/__init__.py": [
+   219318,
+   8,
+   "ad2e13b69c4fc1fda46413f740f426fc1793cfc6d6da8d226ba619f1aef48be7"
+  ],
+  "sqlglot/generators/athena.py": [
+   219326,
+   1786,
+   "9567f6c886a2ca5cd04bd91aca1e1f9dfa7b0fbd8dd08d8052e35cba8ba42de8"
+  ],
+  "sqlglot/generators/bigquery.py": [
+   221112,
+   10347,
+   "959bfa2410814302c6a2cc6b661b21e9adba10efbfce8d1686ee33f7f62ad578"
+  ],
+  "sqlglot/generators/clickhouse.py": [
+   231459,
+   8974,
+   "2b105f4734701f3066af7c5f178206520ac61cc54438dde75847454780c96db7"
+  ],
+  "sqlglot/generators/databricks.py": [
+   240433,
+   2540,
+   "8f28701435eca9a639856a91c83e49897d2e037a8ea2821490e3523e16a98bf8"
+  ],
+  "sqlglot/generators/dax.py": [
+   242973,
+   130,
+   "514e6e42a89adb63c80190242f483f6b99618a098b7affbbbb841265d853bd3e"
+  ],
+  "sqlglot/generators/doris.py": [
+   243103,
+   4120,
+   "2aa8d2c799bbd66f4fca3f12a8c9e011d2bbd4fffd0b49cc7d85a3920ec17dd9"
+  ],
+  "sqlglot/generators/dremio.py": [
+   247223,
+   1441,
+   "246453237ad057a8679edbb08c83b3097d9ef4683f67ec41b66ff67f40c594ab"
+  ],
+  "sqlglot/generators/drill.py": [
+   248664,
+   1694,
+   "1a90a8c7b32d6a69057e89bdf8c36a456c661ae6a4337466a5f2f16a1d4d3657"
+  ],
+  "sqlglot/generators/druid.py": [
+   250358,
+   416,
+   "4e6a1048e8919d8d2863bbb536d226eeecb5270a1da38b73e4e0ca3a0a70ae0e"
+  ],
+  "sqlglot/generators/duckdb.py": [
+   250774,
+   51178,
+   "3111f192e24d67e7c55b979133e535b417576e93ea1b52539e3da6a5c6c8cdc6"
+  ],
+  "sqlglot/generators/dune.py": [
+   301952,
+   271,
+   "0b9a3fc6a0bf3c3ffe185826fecbb3e599186f0563a4b24281b5c95962c7a9a5"
+  ],
+  "sqlglot/generators/exasol.py": [
+   302223,
+   7182,
+   "5ffaae98a16763fe52844e5aaa97ce8a74fbd89507284c351294f5c3cc25a5e9"
+  ],
+  "sqlglot/generators/fabric.py": [
+   309405,
+   2147,
+   "aa958c768a399be28330a1e39385740bef00e7ded11f2571454921e2e91ce047"
+  ],
+  "sqlglot/generators/hive.py": [
+   311552,
+   7334,
+   "101c88f76d343d9bacc871b071d35c6462f75ee507edd84db5330a2a9f76dd65"
+  ],
+  "sqlglot/generators/materialize.py": [
+   318886,
+   783,
+   "4f9091f29db6327e9eecdbeb058567bef898d4fe8e7f4bcbc2a4688cf608e9dd"
+  ],
+  "sqlglot/generators/mysql.py": [
+   319669,
+   7568,
+   "a08ff4e55d0e0c096ff02ddb440040a28f9af9ac672ea6f7fcfea4b9a69d3bd3"
+  ],
+  "sqlglot/generators/oracle.py": [
+   327237,
+   2690,
+   "3cbc10a4994d6958be65efe55c89910715858035ee5efb0c7e9cb81a53c68a5f"
+  ],
+  "sqlglot/generators/postgres.py": [
+   329927,
+   7643,
+   "82b6aaedb09cc6fa28547a78a87810d35eb0acccbea3532d3bc505043fefdb53"
+  ],
+  "sqlglot/generators/presto.py": [
+   337570,
+   8441,
+   "dd6ea17f04c1f8a1f5d450057a829a836c6aaaee5dabf69e18d93b4d9a4d0922"
+  ],
+  "sqlglot/generators/prql.py": [
+   346011,
+   131,
+   "67c0859f15d0b02177e9ec8f30a6fe93f8bceaed7ae4a71ab9818c87963aeb74"
+  ],
+  "sqlglot/generators/python.py": [
+   346142,
+   1595,
+   "afaf387a9833002d3b0475a721699ca27f393b90a5e5cd109e6c639364217128"
+  ],
+  "sqlglot/generators/redshift.py": [
+   347737,
+   3963,
+   "a9ad2dc0315d0689dd08424df6ec04c1bdf0ee9670dee7a2ff11fb3616a42041"
+  ],
+  "sqlglot/generators/risingwave.py": [
+   351700,
+   544,
+   "5aff9aecf20c860846f1006b18d9d7223551305d0982e0856deed53415a08f5a"
+  ],
+  "sqlglot/generators/singlestore.py": [
+   352244,
+   9804,
+   "d8f86f3cfc52c847e587dc63488c64218797adfd5fd58794716f0fb8ea20584d"
+  ],
+  "sqlglot/generators/snowflake.py": [
+   362048,
+   12212,
+   "cf629983f3391681af8e7be75e10f59c35aa481eddc5d8ef1d83b7a68eebd93f"
+  ],
+  "sqlglot/generators/solr.py": [
+   374260,
+   131,
+   "4611e851b873ac5ba15711a9978d6a885574cb30dd9c1932dc4645f318c326f1"
+  ],
+  "sqlglot/generators/spark.py": [
+   374391,
+   2551,
+   "7a31887c8a841b2786a90567e47396d2213b1be86f32717d81775b9874f3f221"
+  ],
+  "sqlglot/generators/spark2.py": [
+   376942,
+   3716,
+   "bc6373345aa1f2efc64280202dd3bcf1444bb09058e69579c54b1c58cd73edfe"
+  ],
+  "sqlglot/generators/sqlite.py": [
+   380658,
+   5465,
+   "e6ede2d074b5e1b0da0200630a590ae788267362fb4897972fd8daa424668f2a"
+  ],
+  "sqlglot/generators/starrocks.py": [
+   386123,
+   4476,
+   "08dd015c6f21924708d26b2e9603deb85ae37b2ea1447e94f0f80b7e0f2f4b51"
+  ],
+  "sqlglot/generators/tableau.py": [
+   390599,
+   645,
+   "52a35fdeb8a1d18eefa4e4f77b27897ed0d6546bcff0ebf711ee9dca430603ce"
+  ],
+  "sqlglot/generators/teradata.py": [
+   391244,
+   3058,
+   "6abc898ef5aaf78cc7eba67738368a3f6e5e2dcf6a41bd40ba619ad39b0ea7e3"
+  ],
+  "sqlglot/generators/trino.py": [
+   394302,
+   2447,
+   "767de185413835a7eb5f6f488a6b7459cde6743913853a662715c7d4ca07146b"
+  ],
+  "sqlglot/generators/tsql.py": [
+   396749,
+   8758,
+   "e8a0a20f940b8dfb04be58711003b36aab4e56601884362b64b38ad3bfd1e150"
+  ],
+  "sqlglot/helper.py": [
+   405507,
+   4323,
+   "bc8e135b2168ac5361168e9d39dcb6d74d1631c891ebbfc045a90f597bdf150b"
+  ],
+  "sqlglot/jsonpath.py": [
+   409830,
+   2422,
+   "bac2d4a5a1167f6bb043619161df4eb64a4358b1c1daaadf733774bec95d1241"
+  ],
+  "sqlglot/lineage.py": [
+   412252,
+   7602,
+   "8c940afdc52a508c75bcf19c4e4e30f98aa3a61b3578d8ec4fb35b1e6a9161d8"
+  ],
+  "sqlglot/optimizer/__init__.py": [
+   419854,
+   1102,
+   "ae2cdc68ad685455a3aefd05db5fa2ef5ee2669e30a2aa591694a63e8987780f"
+  ],
+  "sqlglot/optimizer/annotate_types.py": [
+   420956,
+   10915,
+   "45bf716296f7971b170db7d50f6dd143ad8ff7f3200112048777bda55802f1a3"
+  ],
+  "sqlglot/optimizer/canonicalize.py": [
+   431871,
+   2365,
+   "a14764bf4e98ad6ae1fe74a909dfcbbe65f7b51af4c2603f4ac372112884726e"
+  ],
+  "sqlglot/optimizer/canonicalize_internal_names.py": [
+   434236,
+   4322,
+   "ea8cd07253c11d996482a1b4dafb64f5ce854b564d7729352333732113323678"
+  ],
+  "sqlglot/optimizer/eliminate_ctes.py": [
+   438558,
+   715,
+   "e670c5f005c0df76ace27298f253a706595ee9229f46c8698ca14cd9835cf075"
+  ],
+  "sqlglot/optimizer/eliminate_joins.py": [
+   439273,
+   2370,
+   "697b964c026c087ba49941ed2bd99bbb67e3e302b55299df63764ab9accb7287"
+  ],
+  "sqlglot/optimizer/eliminate_subqueries.py": [
+   441643,
+   2158,
+   "ec82b9bd281867186a67cd9662c6c69d5aaf078e6213aab30557de3c2a7d4e9c"
+  ],
+  "sqlglot/optimizer/helpers.py": [
+   443801,
+   864,
+   "2e7254292f1c11d73d52616bbd279ac5383ebb799e253f2d14b9e2abf5f0b237"
+  ],
+  "sqlglot/optimizer/isolate_table_selects.py": [
+   444665,
+   557,
+   "1a18f5b5d34aea5c3e91bb7d953ee84d3f8de758b5e2521e15f7f998a02a24c3"
+  ],
+  "sqlglot/optimizer/journal.py": [
+   445222,
+   594,
+   "94f682c2c4a7ac659d711dbe9b4a19dae2f2bc006c5956c852cea373adef7078"
+  ],
+  "sqlglot/optimizer/merge_subqueries.py": [
+   445816,
+   8177,
+   "2056612859e038b7eda4ad14d4f568311549c9c7f9e694f1b600df6870a3e820"
+  ],
+  "sqlglot/optimizer/normalize.py": [
+   453993,
+   2326,
+   "62ab6e315cbbfa21abfe0df445247bd63ea26a1da94cc4f6efe8738558a3bc04"
+  ],
+  "sqlglot/optimizer/normalize_identifiers.py": [
+   456319,
+   1466,
+   "649fae5acdbea32c3db57ab120d1dfd27aa63d5cfd3678c710d6e529af50a660"
+  ],
+  "sqlglot/optimizer/optimize_joins.py": [
+   457785,
+   1775,
+   "6e2109fd47bee1551fcedf18bf6e4840cc6f29b700a6dd8f44dc245649d8f7ce"
+  ],
+  "sqlglot/optimizer/optimizer.py": [
+   459560,
+   1603,
+   "a4565f5bd21f175deaf22b437f5cad97236e55afdb8d8f8ed48785835b872f80"
+  ],
+  "sqlglot/optimizer/pushdown_predicates.py": [
+   461163,
+   3506,
+   "b6d5956c6e07130bc4e91c37e41141b88bfe38dd758215b44629b0a324f42280"
+  ],
+  "sqlglot/optimizer/pushdown_projections.py": [
+   464669,
+   6642,
+   "ba1ac319cdcf30929dba02e33f40b5792635d5a460682295e77b6d7def60e468"
+  ],
+  "sqlglot/optimizer/qualify.py": [
+   471311,
+   1324,
+   "50d2603b272ef41f1d75e6a1c9481196937d3233cadc05403a6797a3478e292e"
+  ],
+  "sqlglot/optimizer/qualify_columns.py": [
+   472635,
+   15375,
+   "3abbc96d8ec705fe66638dc58f2d096f98dad6361c24749bd37398d2d19e96fe"
+  ],
+  "sqlglot/optimizer/qualify_tables.py": [
+   488010,
+   3286,
+   "cac7548187ca3669b4f480bdba37313daa89e82cb7142e9faf7cec391877386b"
+  ],
+  "sqlglot/optimizer/resolver.py": [
+   491296,
+   6115,
+   "e1707b1d590488c5958c3ae41b22a804161ee8e8ed6be9d270b1cf5c74666899"
+  ],
+  "sqlglot/optimizer/scope.py": [
+   497411,
+   9648,
+   "020a4248f6888799d722bc3d0c6c8c94c7005a1ae88f634a44ebf4d246329c1d"
+  ],
+  "sqlglot/optimizer/simplify.py": [
+   507059,
+   16045,
+   "bce9d05c78fa72022dcd01f7434a317503ff590f5fa65a42cb4f4cc3d64e01ad"
+  ],
+  "sqlglot/optimizer/unnest_subqueries.py": [
+   523104,
+   6613,
+   "4baea1be7e9b842c4119d3a03c1fbf8b922319f6d19e9eb91f5a915793c429fe"
+  ],
+  "sqlglot/parser.py": [
+   529717,
+   84713,
+   "027f313abcfad4e9bc5e66c1d12cc666301850b8d6c27bd6731693ddeecc3f3f"
+  ],
+  "sqlglot/parsers/__init__.py": [
+   614430,
+   9,
+   "ad2e13b69c4fc1fda46413f740f426fc1793cfc6d6da8d226ba619f1aef48be7"
+  ],
+  "sqlglot/parsers/athena.py": [
+   614439,
+   722,
+   "3c8a681215a98f35adb55f93370f765d5a9280cffcb6d51e5bb4fbf0fb6af788"
+  ],
+  "sqlglot/parsers/base.py": [
+   615161,
+   299,
+   "7b0111612b119fbde984e1a0fe05136e80adcad5230a6976013670943d2f8dd7"
+  ],
+  "sqlglot/parsers/bigquery.py": [
+   615460,
+   8113,
+   "17b7bfeab23121aea8b0d448e084d2a73c0c78e71ea3b9020bbc96cde369db9a"
+  ],
+  "sqlglot/parsers/clickhouse.py": [
+   623573,
+   10242,
+   "734fcd8ce9b7982761d5cd8e1ac715d93138c34f1edb3ea56391c0a5a2382586"
+  ],
+  "sqlglot/parsers/databricks.py": [
+   633815,
+   1184,
+   "0b6cfb1e82e70e81e667c2bf1eef76070e290231db1b159a67ca1a622dfb7363"
+  ],
+  "sqlglot/parsers/dax.py": [
+   634999,
+   595,
+   "3104fe5ac6cc85827bf607f5ab3f5ebd909649e6bd45b7e076d0368781054273"
+  ],
+  "sqlglot/parsers/doris.py": [
+   635594,
+   2110,
+   "0e28d3cdebcf1c02b5a609c7c3aee9ab39d61dcc35991e9d8e4b431ada7e8c34"
+  ],
+  "sqlglot/parsers/dremio.py": [
+   637704,
+   1467,
+   "c451c7765e1dff84f40f0594785afc1c77c0dc763b999be5dfa946c824d9980d"
+  ],
+  "sqlglot/parsers/drill.py": [
+   639171,
+   510,
+   "dda3c6d754a1e10c9797d545e1f7d6438d4df2ad19f6f7dc0fd14a5ec556ccfc"
+  ],
+  "sqlglot/parsers/druid.py": [
+   639681,
+   168,
+   "8355a439cd553486c5b74aa5b80bfe183aad5f47620fdfc833b8ddbc0126551c"
+  ],
+  "sqlglot/parsers/duckdb.py": [
+   639849,
+   6101,
+   "1018aa80cb1a332588ad296436a507449eb74a80ff2e571bfe9c26acd1325fba"
+  ],
+  "sqlglot/parsers/dune.py": [
+   645950,
+   99,
+   "5d6534d76de996d57a67250bcd02f5ff83a88058759c0a33482f5b3a9bed1156"
+  ],
+  "sqlglot/parsers/exasol.py": [
+   646049,
+   1878,
+   "f0638dcb1fb4d74849f30d19474ef67e9e4154f0e052f58e56b6d3862e422909"
+  ],
+  "sqlglot/parsers/fabric.py": [
+   647927,
+   562,
+   "2531ecab1f70205180cc1ed5b09a6f681efe40f6b9c336aa0fba409b59fc5870"
+  ],
+  "sqlglot/parsers/hive.py": [
+   648489,
+   4023,
+   "cc1371ebba4de275fa1fde3f6aea2878f05b838e18580fb586af67c3b615c1ce"
+  ],
+  "sqlglot/parsers/materialize.py": [
+   652512,
+   524,
+   "6a99e3d0ca83f4689aa948ba18ca8c81728f84e6b49049e67d4af9a30ba32b48"
+  ],
+  "sqlglot/parsers/mysql.py": [
+   653036,
+   7238,
+   "6f67e22613dd8e00b200518f0e9399757e3c5c9188e8029b77ef9bb0c84fc663"
+  ],
+  "sqlglot/parsers/oracle.py": [
+   660274,
+   3744,
+   "b2e85262d9cb990c23392611bb7b62ed4635364efdd05f464d6869bdd83d07cd"
+  ],
+  "sqlglot/parsers/postgres.py": [
+   664018,
+   4745,
+   "e358c8ea068e8d048fee77418d7d93bfbe0d82f9c2a6057014a8e007e18d44e2"
+  ],
+  "sqlglot/parsers/presto.py": [
+   668763,
+   2147,
+   "455fa294bd1e09c2f7472e7aec2b8694c4e946698dd1a78ef40cdfaf972a0c04"
+  ],
+  "sqlglot/parsers/prql.py": [
+   670910,
+   1861,
+   "a0af0df2c2aec372dad18d0120075e934a1b5af71bb45d6e20ba501604592e54"
+  ],
+  "sqlglot/parsers/redshift.py": [
+   672771,
+   1921,
+   "848156526b2ba180e1cde596a553d6d763930e48a4ad32820e5f355e1eee817f"
+  ],
+  "sqlglot/parsers/risingwave.py": [
+   674692,
+   799,
+   "0bdb9681a1b32eb98d33452e5dea78e5d9fcf3a23a483cd7f36debb5ad8e0885"
+  ],
+  "sqlglot/parsers/singlestore.py": [
+   675491,
+   2377,
+   "74fac17a926ba9dfc2c3f8e449ca125cb568f09d50a3d442839e16898bc590d0"
+  ],
+  "sqlglot/parsers/snowflake.py": [
+   677868,
+   13131,
+   "0e53d68efcec5d89195ac1c6d1323c71ca0985b7aa696460be20808c48313025"
+  ],
+  "sqlglot/parsers/solr.py": [
+   690999,
+   194,
+   "c423a708aa5af1b0b2561f6c68cf97a33b6d2c18f22f36798ae3a20dfd2cd5f9"
+  ],
+  "sqlglot/parsers/spark.py": [
+   691193,
+   1861,
+   "2a3ab9336d5ca0a93cedbce52a8e7a8a9ff2aa294ee21afca0e6cd2b37ed79dc"
+  ],
+  "sqlglot/parsers/spark2.py": [
+   693054,
+   1860,
+   "3a3bb08bb09693af57fc8b62c9044261c630303d8e18d7f65605aa78cce8cecd"
+  ],
+  "sqlglot/parsers/sqlite.py": [
+   694914,
+   4238,
+   "62b1ca4239307fb179ca46ab1e846fb1ec4c92b5319e202fe44b434c6e260965"
+  ],
+  "sqlglot/parsers/starrocks.py": [
+   699152,
+   3579,
+   "1c75089d8328b137ada82dcafeb5474802e5b4ad9fe425b7fd3231bcc5894bb7"
+  ],
+  "sqlglot/parsers/tableau.py": [
+   702731,
+   284,
+   "6c31f6868a96d7e32cf9e8563e504590b841a68c639ba96ed3bddf00f465d600"
+  ],
+  "sqlglot/parsers/teradata.py": [
+   703015,
+   4351,
+   "4f0c5da8e98e1ec18db4ba0c70d67d283ae44e6a3352bd0a6849d06089daf5d8"
+  ],
+  "sqlglot/parsers/trino.py": [
+   707366,
+   2999,
+   "b0d5d4fcdd23c8056ba60b4239abbdb3e79137ddfe881061f5bed0311ce5f912"
+  ],
+  "sqlglot/parsers/tsql.py": [
+   710365,
+   7948,
+   "eec31d194a162b66bd1b3b94ba17652a815059e62efce996b4c84188988a41a2"
+  ],
+  "sqlglot/planner.py": [
+   718313,
+   4065,
+   "9310a32ec1df10ccaa903830eb825433287732b4687621679cdde86a5169e096"
+  ],
+  "sqlglot/schema.py": [
+   722378,
+   5894,
+   "4cc066d1bb02870364ae460e6823519001bd631431ef30756973722753ce5b33"
+  ],
+  "sqlglot/serde.py": [
+   728272,
+   1109,
+   "c591a45e5c17b71a705815e6e7cc69ccce1f791547061f34ffc086b60c6c8d54"
+  ],
+  "sqlglot/time.py": [
+   729381,
+   4804,
+   "4464bc20ef4fb298e2fa7389d5484cc317d78348ae08ed899d2f461d92b09c5d"
+  ],
+  "sqlglot/tokenizer_core.py": [
+   734185,
+   10266,
+   "c4d9b4e8d2e5ef831d22b78e67863d3a6d9346914d652874cb29c3e7fdff4eb3"
+  ],
+  "sqlglot/tokens.py": [
+   744451,
+   6122,
+   "052e4311efa03419eb467ed174cabbf8992b1117466e43d6e446edba672a7e97"
+  ],
+  "sqlglot/transforms.py": [
+   750573,
+   11437,
+   "d1cd22db51f0ba8d4378a0d7683e3e46938a9473704333ea1ada499e7ea95f3a"
+  ],
+  "sqlglot/trie.py": [
+   762010,
+   895,
+   "5c73f8b6e111e534559843855cb3552db59dc212aea49e16306effa1aade4c85"
+  ],
+  "sqlglot/typing/__init__.py": [
+   762905,
+   2500,
+   "f922f3bf306a57deaab4aef53b279f4233af37308a41932710af273a73d2b12a"
+  ],
+  "sqlglot/typing/bigquery.py": [
+   765405,
+   3796,
+   "6ad9089a9914eceb89a43704165bd8f652950831fcc692d8cc5c9085a1f6fb35"
+  ],
+  "sqlglot/typing/clickhouse.py": [
+   769201,
+   281,
+   "71163a03e5cd5e18b39a42ec169d6a8baa3aa691c9643615957ab49368d378de"
+  ],
+  "sqlglot/typing/databricks.py": [
+   769482,
+   395,
+   "ca287ac4f20921dc892561a3e92f7806b56ef3764772319106697d355a1a0f8f"
+  ],
+  "sqlglot/typing/duckdb.py": [
+   769877,
+   995,
+   "d0a1a9ce6705070379c760bc5a2b523478815abdfe720f269eaff68434d5e864"
+  ],
+  "sqlglot/typing/hive.py": [
+   770872,
+   892,
+   "ed7b85709a0b8b834d7670d766d9fd1e0022c067ee06b1bdad75b2290c37ded3"
+  ],
+  "sqlglot/typing/mysql.py": [
+   771764,
+   1139,
+   "26255765ff8511cdf5cb1252cdb38c90e51793bb34e2c1416c061f9f4fd2daf2"
+  ],
+  "sqlglot/typing/postgres.py": [
+   772903,
+   745,
+   "4d9e7c8efa190eb46d7063b469051a1a8b03eed8ffc67425574d3d63b2af4603"
+  ],
+  "sqlglot/typing/presto.py": [
+   773648,
+   358,
+   "91155829efe0c4ed8a8f76316c33df9d62f1551c042999ce00d818e28a4e5091"
+  ],
+  "sqlglot/typing/redshift.py": [
+   774006,
+   715,
+   "29811ba5f03bd496dcf9d220b8fbb895ebd2052e6408dfb1eeffd5990f3ed918"
+  ],
+  "sqlglot/typing/snowflake.py": [
+   774721,
+   4152,
+   "e9d792f00dc411b117091cdc8fe48f89253278eb5ecf93f38906399778f69f4d"
+  ],
+  "sqlglot/typing/spark.py": [
+   778873,
+   517,
+   "e081f822287f3701234cc233523d03c6543620613667a589e3b373513fdad902"
+  ],
+  "sqlglot/typing/spark2.py": [
+   779390,
+   1071,
+   "1c47960d0220402bbe677027cc795e5f5f602a476e618f13e7b667a74c3fffe1"
+  ],
+  "sqlglot/typing/sqlite.py": [
+   780461,
+   145,
+   "0866387b6e51e38591e4bf6a2d0c5bfb82a0338773f7924836e7bd9b9ebc6eee"
+  ],
+  "sqlglot/typing/tsql.py": [
+   780606,
+   574,
+   "be483504d6471d536dbe2f36009474e31c07fa18869601e44b82cafe73d43e74"
+  ]
+ },
  "sources_sha256": "e3269f5fa8e9159ba9be5aa450b982d562fd77729281e1e1b5e412f0e89467da",
  "sqlglot_commit": "eb11aec4be8cb2122afe713a4816662c3f0fb2fa",
- "tests": 1620
+ "tests": 1620,
+ "tree_python": "3.13.18"
 }

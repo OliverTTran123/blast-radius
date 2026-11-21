@@ -19,25 +19,34 @@ Per sqlglot source file the map holds
   - the lines that ran with no test context, during start-up, collection and
     module imports (recorded for inspection; the selector goes by the
     statement table to decide what runs at import)
+  - the file itself, byte for byte, so the selector can apply a patch to it
+    and see whether the syntax tree changed
 and for every file under tests/, the set of tests that opened or imported it.
 
 Output directory:
-  index.json    format, provenance, where each chunk is, the width of a test set
-  files.bin     zlib-compressed JSON chunks: one per source file, plus "#tests"
-                (node IDs in bit order) and "#opens" (tests/ paths)
-  sets.bin      zlib-compressed table of the distinct test sets, each a
-                fixed-width little-endian bit mask (bit n = n-th node ID)
-  summary.json  what the build measured, for people
+  index.json      format, provenance, where each chunk and source is, a
+                  fingerprint of each source's syntax tree, the width of a
+                  test set
+  files.bin       zlib-compressed JSON chunks: one per source file, plus
+                  "#tests" (node IDs in bit order) and "#opens" (tests/ paths)
+  sets.bin        zlib-compressed table of the distinct test sets, each a
+                  fixed-width little-endian bit mask (bit n = n-th node ID)
+  sources.bin     every sqlglot/**/*.py at the pinned commit, each compressed
+                  with zlib on its own
+  sqlglot-LICENSE sqlglot's MIT licence, which has to travel with its source
+  summary.json    what the build measured, for people
 """
 
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import os
 import platform
 import sys
+import warnings
 import zlib
 from importlib import metadata
 from pathlib import Path
@@ -45,7 +54,7 @@ from pathlib import Path
 from statements import statement_table
 
 REPO = Path("/sqlglot")
-FORMAT = 1
+FORMAT = 2
 
 
 def from_hex(masks: dict[str, str]) -> dict[str, int]:
@@ -217,28 +226,62 @@ def pack(value: object) -> bytes:
     return json.dumps(value, separators=(",", ":")).encode("utf-8")
 
 
+def concatenate(parts: dict[str, bytes]) -> tuple[bytes, dict[str, list[int]]]:
+    """Each part compressed on its own, end to end, and where each one sits."""
+    offsets: dict[str, list[int]] = {}
+    blob = bytearray()
+    for name in sorted(parts):
+        packed = zlib.compress(parts[name], 9)
+        offsets[name] = [len(blob), len(packed)]
+        blob += packed
+    return bytes(blob), offsets
+
+
+def tree_digest(source: bytes) -> str:
+    """A fingerprint of a module's syntax tree with positions left out.
+
+    The selector computes the same thing for a patched file (see syntax_tree and
+    tree_digest in selector.py) and compares. ast.dump's text can differ between
+    Python versions, so the index records which Python made these.
+    """
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            tree = ast.dump(ast.parse(source))
+    except (SyntaxError, ValueError, RecursionError, MemoryError):
+        return ""  # never equal to a real fingerprint
+    return hashlib.sha256(tree.encode("utf-8")).hexdigest()
+
+
 def write_map(
-    out: Path, chunks: dict[str, bytes], sets: SetTable, count: int, provenance: dict
+    out: Path,
+    chunks: dict[str, bytes],
+    sets: SetTable,
+    count: int,
+    provenance: dict,
+    sources: dict[str, bytes],
 ) -> None:
-    """Write index.json, files.bin and sets.bin. The same input gives the same bytes."""
+    """Write index.json and the three .bin files. The same input gives the same bytes."""
     width = (count + 7) // 8
     out.mkdir(parents=True, exist_ok=True)
     table = b"".join(tests.to_bytes(width, "little") for tests in sets.sets)
     (out / "sets.bin").write_bytes(zlib.compress(table, 9))
-    offsets: dict[str, list[int]] = {}
-    blob = bytearray()
-    for name in sorted(chunks):
-        packed = zlib.compress(chunks[name], 9)
-        offsets[name] = [len(blob), len(packed)]
-        blob += packed
-    (out / "files.bin").write_bytes(bytes(blob))
+    files, chunk_offsets = concatenate(chunks)
+    (out / "files.bin").write_bytes(files)
+    packed_sources, source_offsets = concatenate(sources)
+    (out / "sources.bin").write_bytes(packed_sources)
     index = {
         "format": FORMAT,
         **provenance,
         "tests": count,
         "set_bytes": width,
         "sets": len(sets.sets),
-        "chunks": offsets,
+        "chunks": chunk_offsets,
+        # path -> [offset, length, fingerprint of the file's syntax tree]
+        "sources": {
+            name: [*where, tree_digest(sources[name])] for name, where in source_offsets.items()
+        },
+        "tree_python": ".".join(str(part) for part in sys.version_info[:3]),
     }
     (out / "index.json").write_text(json.dumps(index, indent=1, sort_keys=True) + "\n", "utf-8")
 
@@ -300,9 +343,11 @@ def main() -> int:
 
     imported_without_lines = 0
     lines_without_import = 0
+    source_bytes: dict[str, bytes] = {}
     for file in sources:
-        source = (REPO / file).read_text("utf-8")
-        digest.update(file.encode("utf-8") + b"\0" + source.encode("utf-8") + b"\0")
+        source_bytes[file] = (REPO / file).read_bytes()
+        source = source_bytes[file].decode("utf-8")
+        digest.update(file.encode("utf-8") + b"\0" + source_bytes[file] + b"\0")
         hits = [(n, combined[n][file]) for n in range(count) if combined[n].get(file)]
         alone = {n: isolated[n]["lines"].get(file, 0) for n, _ in hits}
         built = build_file(source, hits, alone, sets)
@@ -332,7 +377,8 @@ def main() -> int:
         "sqlglot_commit": os.environ.get("SQLGLOT_COMMIT", "unknown"),
         "sources_sha256": digest.hexdigest(),
     }
-    write_map(options.out, chunks, sets, count, provenance)
+    write_map(options.out, chunks, sets, count, provenance, source_bytes)
+    (options.out / "sqlglot-LICENSE").write_bytes((REPO / "LICENSE").read_bytes())
 
     not_passed = {
         tests[n]["id"]: isolated[n]["outcomes"]
@@ -368,8 +414,8 @@ def main() -> int:
     for extra in suite_only.values():
         for file, mask in extra.items():
             suite_only_by_file[file] = suite_only_by_file.get(file, 0) + mask.bit_count()
-    sizes = {name: (options.out / name).stat().st_size for name in ("files.bin", "sets.bin")}
-    sizes["index.json"] = (options.out / "index.json").stat().st_size
+    in_image = ("files.bin", "sets.bin", "sources.bin", "index.json")
+    sizes = {name: (options.out / name).stat().st_size for name in in_image}
     summary = {
         "built_with": {
             "python": platform.python_version(),
@@ -417,7 +463,8 @@ def main() -> int:
         },
         "source_files": {
             "count": len(sources),
-            "lines": sum(len((REPO / f).read_text("utf-8").splitlines()) for f in sources),
+            "bytes": sum(len(data) for data in source_bytes.values()),
+            "lines": sum(len(data.decode("utf-8").splitlines()) for data in source_bytes.values()),
             "executed_by_some_test": sum(1 for file in sources if union_all.get(file)),
             "lines_executed_by_some_test": count_bits(union_all),
             "lines_executed_with_no_test_context": count_bits(no_test_context),

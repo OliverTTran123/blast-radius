@@ -68,6 +68,13 @@ DEMO = "sqlglot/demo.py"
 TYPED = "sqlglot/typed.py"
 LATE = "sqlglot/late.py"
 LATE_SOURCE = "def f(x):\n    if x:\n        return 1\n    return 2\n"
+# A string that spans lines and a backslash continuation: places where an added
+# "comment" line is not a comment. Tests 0 and 1 import it, only test 0 calls total().
+TEXT = "sqlglot/text.py"
+TEXT_SOURCE = 'SQL = """\nSELECT 1\n"""\n\n\ndef total(a, b):\n    return a + \\\n        b\n'
+# A string literal that is not ASCII, stored as UTF-8. Test 2 imports it.
+ACCENT = "sqlglot/accent.py"
+ACCENT_SOURCE = 'NAME = "\u00e9"\n'
 
 
 def mask(lines: list[int]) -> int:
@@ -93,6 +100,11 @@ def build_map(directory: Path) -> None:
     late_alone = {0: mask([1, 2, 4]), 1: mask([1, 2])}
     late = assemble.build_file(LATE_SOURCE, late_hits, late_alone, sets)["chunk"]
     late.update(any_line=sets.add(0b00011), readers=sets.add(0), no_test_context=[])
+    text_hits = [(0, mask([1, 6, 7, 8])), (1, mask([1, 6]))]
+    text = assemble.build_file(TEXT_SOURCE, text_hits, dict(text_hits), sets)["chunk"]
+    text.update(any_line=sets.add(0b00011), readers=sets.add(0), no_test_context=[])
+    accent = assemble.build_file(ACCENT_SOURCE, [(2, mask([1]))], {2: mask([1])}, sets)["chunk"]
+    accent.update(any_line=sets.add(0b00100), readers=sets.add(0), no_test_context=[])
     opens = {
         "tests/fixtures/a.sql": sets.add(0b00110),
         "tests/test_two.py": sets.add(0b11000),
@@ -102,10 +114,19 @@ def build_map(directory: Path) -> None:
         DEMO: assemble.pack(demo),
         TYPED: assemble.pack(typed),
         LATE: assemble.pack(late),
+        TEXT: assemble.pack(text),
+        ACCENT: assemble.pack(accent),
         "#tests": assemble.pack(IDS),
         "#opens": assemble.pack(opens),
     }
-    assemble.write_map(directory, chunks, sets, len(IDS), {})
+    sources = {
+        DEMO: SOURCE.encode("utf-8"),
+        TYPED: b"VALUE = 1\n",
+        LATE: LATE_SOURCE.encode("utf-8"),
+        TEXT: TEXT_SOURCE.encode("utf-8"),
+        ACCENT: ACCENT_SOURCE.encode("utf-8"),
+    }
+    assemble.write_map(directory, chunks, sets, len(IDS), {}, sources)
 
 
 def patch(path: str, old: str, new: str) -> str:
@@ -142,9 +163,10 @@ class SelectorCase(unittest.TestCase):
         build_map(Path(cls.directory.name))
         cls.selector = selector.Selector(cls.directory.name, tests_json(IDS))
 
-    def select(self, text: str, chooser: selector.Selector | None = None) -> set[int]:
+    def select(self, text: str | bytes, chooser: selector.Selector | None = None) -> set[int]:
+        data = text if isinstance(text, bytes) else text.encode("utf-8")
         with contextlib.redirect_stderr(io.StringIO()) as self.log:
-            return set(selector.bits((chooser or self.selector).select("c", text)))
+            return set(selector.bits((chooser or self.selector).select("c", data)))
 
     def edit(self, new_source: str) -> set[int]:
         return self.select(patch(DEMO, SOURCE, new_source))
@@ -177,7 +199,8 @@ class TestChangedLines(SelectorCase):
         self.assertIn("never executed", self.log.getvalue())
 
     def test_deleted_line_selects_the_tests_that_ran_it(self):
-        self.assertEqual(self.edit(deleted(13)), {0})
+        self.assertEqual(self.edit(deleted(21)), {0, 1, 2})
+        self.assertEqual(self.edit(deleted(25) + "    pass\n"), {3})
 
     def test_statement_reached_only_after_other_tests_selects_the_whole_file(self):
         # Only test 1 ever ran `return 1`, and only after other tests. Later tests
@@ -196,7 +219,7 @@ class TestInsertedLines(SelectorCase):
         self.assertEqual(self.edit(inserted_after(20, "    y += 1")), {0, 1, 2})
 
     def test_inside_a_statement_that_spans_lines(self):
-        self.assertEqual(self.edit(inserted_after(18, "        # why")), {0, 1, 2})
+        self.assertEqual(self.edit(inserted_after(18, "        a,")), {0, 1, 2})
 
     def test_after_an_inner_block_is_widened_to_the_block_it_may_join(self):
         # New code after `x = 1` may sit in the `if a:` body, which test 1 reaches
@@ -207,11 +230,117 @@ class TestInsertedLines(SelectorCase):
         self.assertEqual(self.edit(inserted_after(9, "    a = not a")), {0, 1, 2, 3, 4})
 
     def test_between_two_functions_selects_every_test_that_ran_the_file(self):
-        self.assertEqual(self.edit(inserted_after(21, "    # done")), {0, 1, 2, 3, 4})
+        self.assertEqual(self.edit(inserted_after(21, "    y = 0")), {0, 1, 2, 3, 4})
 
     def test_at_the_top_and_bottom_of_the_file(self):
-        self.assertEqual(self.edit("# header\n" + SOURCE), {0, 1, 2, 3, 4})
+        self.assertEqual(self.edit("FIRST = 1\n" + SOURCE), {0, 1, 2, 3, 4})
         self.assertEqual(self.edit(SOURCE + "LAST = 1\n"), {0, 1, 2, 3, 4})
+
+
+class TestSameSyntaxTree(SelectorCase):
+    """Edits that leave the syntax tree alone select only the tests that read the text."""
+
+    def test_comments_select_nothing_wherever_they_go(self):
+        for line, text in [
+            (13, "            # inside a nested block"),
+            (9, "    # right after a def line"),
+            (21, "    # last line of a function"),
+            (18, "        # between the lines of a call"),
+            (1, "# between imports and the table"),
+        ]:
+            with self.subTest(text):
+                self.assertEqual(self.edit(inserted_after(line, text)), set())
+        self.assertEqual(self.edit("# first line\n" + SOURCE), set())
+        self.assertEqual(self.edit(replaced(14, "        # the comment, reworded")), set())
+        self.assertEqual(self.edit(replaced(13, "            x = 1  # trailing")), set())
+        self.assertIn("keeps its syntax tree", self.log.getvalue())
+
+    def test_blank_lines_and_layout_select_nothing(self):
+        self.assertEqual(self.edit(inserted_after(13, "")), set())
+        self.assertEqual(self.edit(deleted(8)), set())
+        self.assertEqual(self.edit(replaced(18, "            a,")), set())
+        one_line = SOURCE.replace("y = call(\n        a,\n        b,\n    )", "y = call(a, b)")
+        self.assertNotEqual(one_line, SOURCE)
+        self.assertEqual(self.edit(one_line), set())
+
+    def test_tests_that_read_the_file_as_text_are_still_selected(self):
+        self.assertEqual(self.select(patch(TYPED, "VALUE = 1\n", "VALUE = 1  # note\n")), {4})
+
+    def test_other_files_of_the_same_patch_still_count(self):
+        both = patch(DEMO, SOURCE, inserted_after(13, "            # note")) + patch(
+            "tests/fixtures/a.sql", "x;\n", "y;\n"
+        )
+        self.assertEqual(self.select(both), {1, 2})
+
+    def test_changed_docstring_and_string_are_not_the_same_tree(self):
+        self.assertEqual(self.edit(replaced(4, '    "a": 1.0,')), {0, 1, 2, 3, 4})
+        inside_string = TEXT_SOURCE.replace("SELECT 1\n", "SELECT 1\n# note\n")
+        self.assertEqual(self.select(patch(TEXT, TEXT_SOURCE, inside_string)), {0, 1})
+
+    def test_encoding_line_that_changes_a_string_is_not_the_same_tree(self):
+        # As text this is one added comment. As bytes it changes what NAME holds.
+        declared = "# -*- coding: latin-1 -*-\n" + ACCENT_SOURCE
+        self.assertEqual(self.select(patch(ACCENT, ACCENT_SOURCE, declared)), {2})
+        self.assertEqual(
+            self.select(patch(ACCENT, ACCENT_SOURCE, "# plain\n" + ACCENT_SOURCE)), set()
+        )
+
+
+class TestFileThatNoLongerParses(SelectorCase):
+    """Importing a file that does not parse fails, so every test that ran it is selected."""
+
+    def test_comment_after_a_line_continuation(self):
+        # Line rules alone would stop at test 0, the only one that ran `return`.
+        broken = TEXT_SOURCE.replace("a + \\\n", "a + \\\n        # note\n")
+        self.assertEqual(self.select(patch(TEXT, TEXT_SOURCE, broken)), {0, 1})
+        self.assertIn("no longer parses", self.log.getvalue())
+
+    def test_unbalanced_bracket_in_a_function_few_tests_call(self):
+        self.assertEqual(self.edit(replaced(25, "    return (0")), {0, 1, 2, 3, 4})
+
+    def test_deleting_the_only_statement_of_a_block(self):
+        # Only test 0 ran `x = 1`, but without it the `if b:` above has no body.
+        self.assertEqual(self.edit(deleted(13)), {0, 1, 2, 3, 4})
+
+    def test_bytes_that_are_not_valid_utf8(self):
+        # A "comment" Python cannot decode. Encoded as Latin-1 the patch holds the raw byte.
+        undecodable = patch(TEXT, TEXT_SOURCE, TEXT_SOURCE.replace("\n\n\n", "\n# \xff\n\n", 1))
+        self.assertEqual(self.select(undecodable.encode("latin-1")), {0, 1})
+
+    def test_readers_are_selected_too(self):
+        self.assertEqual(self.select(patch(TYPED, "VALUE = 1\n", "VALUE = (1\n")), {3, 4})
+
+
+class TestTreeFingerprints(SelectorCase):
+    """The map stores a fingerprint of each pinned file's tree so it is not parsed again."""
+
+    def test_the_map_builder_and_the_selector_fingerprint_a_tree_the_same_way(self):
+        index = self.selector.map.index
+        for path in (DEMO, TYPED, LATE, TEXT, ACCENT):
+            with self.subTest(path):
+                lines, stored = self.selector.map.source(path)
+                self.assertEqual(stored, index["sources"][path][2])
+                self.assertEqual(stored, selector.tree_digest(selector.syntax_tree(lines)[1]))
+
+    def test_a_map_made_by_another_python_is_parsed_instead_of_trusted(self):
+        with tempfile.TemporaryDirectory() as name:
+            build_map(Path(name))
+            index_path = Path(name) / "index.json"
+            index = json.loads(index_path.read_text("utf-8"))
+            index["tree_python"] = "0.0.0"
+            for where in index["sources"].values():
+                where[2] = "made by some other Python"
+            index_path.write_text(json.dumps(index), "utf-8")
+            other = selector.Selector(name, tests_json(IDS))
+            comment = patch(DEMO, SOURCE, inserted_after(13, "            # note"))
+            self.assertEqual(self.select(comment, other), set())
+            code = patch(DEMO, SOURCE, replaced(25, "    return 1"))
+            self.assertEqual(self.select(code, other), {3})
+
+    def test_a_module_without_a_tree_has_no_fingerprint(self):
+        self.assertEqual(selector.syntax_tree(["x = ("]), (False, None))
+        self.assertEqual(selector.tree_digest(None), "")
+        self.assertNotEqual(selector.tree_digest(selector.syntax_tree(["x = 1"])[1]), "")
 
 
 class TestOtherPaths(SelectorCase):
@@ -232,9 +361,22 @@ class TestOtherPaths(SelectorCase):
             with self.subTest(path):
                 self.assertEqual(self.select(patch(path, "a\n", "b\n")), self.everyone)
 
-    def test_line_beyond_the_mapped_file_selects_every_test(self):
+    def test_patch_that_does_not_fit_the_pinned_file_selects_every_test(self):
         longer = SOURCE + "\n" * 40 + "x = 1\n"
         self.assertEqual(self.select(patch(DEMO, longer, longer + "y = 2\n")), self.everyone)
+        self.assertIn("does not fit", self.log.getvalue())
+        # Right place, but one context line is not what the pinned file holds there.
+        other = SOURCE.replace("        b,", "        c,")
+        self.assertNotEqual(other, SOURCE)
+        drifted = patch(DEMO, other, other.replace("return y", "return -y"))
+        self.assertEqual(self.select(drifted), self.everyone)
+        # A comment-only edit of a file that does not match is still unknown.
+        comment = patch(DEMO, other, other.replace("return y", "return y  # note"))
+        self.assertEqual(self.select(comment), self.everyone)
+
+    def test_the_same_file_twice_in_one_patch_selects_every_test(self):
+        twice = patch(DEMO, SOURCE, replaced(25, "    return 1")) * 2
+        self.assertEqual(self.select(twice), self.everyone)
 
     def test_one_unknown_file_makes_the_whole_patch_every_test(self):
         both = patch(DEMO, SOURCE, replaced(25, "    return 1")) + patch("setup.py", "a\n", "b\n")

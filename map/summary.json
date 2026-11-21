@@ -8,9 +8,10 @@
  },
  "bytes": {
   "files.bin": 348824,
-  "index.json": 10988,
+  "index.json": 34847,
   "sets.bin": 110077,
-  "total": 469889
+  "sources.bin": 781180,
+  "total": 1274928
  },
  "child_processes": {
   "lines_only_a_child_ran": {
@@ -207,6 +208,7 @@
   "distinct": 6036
  },
  "source_files": {
+  "bytes": 3168375,
   "count": 184,
   "executed_by_some_test": 183,
   "lines": 88223,

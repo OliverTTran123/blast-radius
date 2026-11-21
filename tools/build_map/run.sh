@@ -5,7 +5,7 @@
 #
 # It builds the labeling environment (tools/build_map/Dockerfile), runs every
 # test alone and the whole suite once under coverage, and writes the compact
-# map the selector reads. About 20 minutes on a 22-thread machine.
+# map the selector reads. About 30 minutes on a 22-thread machine.
 #
 # Raw records go to a Docker volume, not to the repo. An isolated pass skips
 # tests it already has a record for, so remove the volume to start clean:
@@ -13,7 +13,9 @@
 #   docker volume rm blast-radius-map-work
 #
 # SEEDS lists the PYTHONHASHSEED values to run the isolated pass with; the map
-# is the union. JOBS is how many tests run at once.
+# is the union. The committed map used 0 and 1, which agreed on every line of
+# every test, so one seed gives the same files apart from the pass count in
+# summary.json. JOBS is how many tests run at once.
 set -euo pipefail
 
 cd "$(dirname "$0")/../.."
@@ -21,7 +23,7 @@ ROOT=$PWD
 IMAGE=blast-radius-map
 VOLUME=${MAP_VOLUME:-blast-radius-map-work}
 JOBS=${JOBS:-18}
-SEEDS=${SEEDS:-0}
+SEEDS=${SEEDS:-0 1}
 
 docker build --platform linux/amd64 -f tools/build_map/Dockerfile -t "$IMAGE" .
 

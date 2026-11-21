@@ -1,0 +1,15 @@
+# coverage.py settings for tools/build_map. Read through COVERAGE_PROCESS_START
+# by every Python process of a measured test.
+[run]
+# The C tracer. The sys.monitoring core cannot keep per-test contexts.
+core = ctrace
+# One data file per process, named <COVERAGE_FILE>.<host>.pid<pid>.<random>.
+parallel = True
+source =
+    /sqlglot/sqlglot
+disable_warnings =
+    no-data-collected
+    module-not-imported
+    module-not-measured
+    already-imported
+    couldnt-parse

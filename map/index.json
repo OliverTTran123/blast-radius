@@ -1,0 +1,754 @@
+{
+ "chunks": {
+  "#opens": [
+   0,
+   1147
+  ],
+  "#tests": [
+   1147,
+   12636
+  ],
+  "sqlglot/__init__.py": [
+   13783,
+   529
+  ],
+  "sqlglot/__main__.py": [
+   14312,
+   255
+  ],
+  "sqlglot/_typing.py": [
+   14567,
+   444
+  ],
+  "sqlglot/anonymize.py": [
+   15011,
+   1400
+  ],
+  "sqlglot/dialects/__init__.py": [
+   16411,
+   254
+  ],
+  "sqlglot/dialects/athena.py": [
+   16665,
+   568
+  ],
+  "sqlglot/dialects/bigquery.py": [
+   17233,
+   663
+  ],
+  "sqlglot/dialects/clickhouse.py": [
+   17896,
+   459
+  ],
+  "sqlglot/dialects/databricks.py": [
+   18355,
+   239
+  ],
+  "sqlglot/dialects/dax.py": [
+   18594,
+   181
+  ],
+  "sqlglot/dialects/dialect.py": [
+   18775,
+   12446
+  ],
+  "sqlglot/dialects/doris.py": [
+   31221,
+   193
+  ],
+  "sqlglot/dialects/dremio.py": [
+   31414,
+   212
+  ],
+  "sqlglot/dialects/drill.py": [
+   31626,
+   242
+  ],
+  "sqlglot/dialects/druid.py": [
+   31868,
+   130
+  ],
+  "sqlglot/dialects/duckdb.py": [
+   31998,
+   564
+  ],
+  "sqlglot/dialects/dune.py": [
+   32562,
+   151
+  ],
+  "sqlglot/dialects/exasol.py": [
+   32713,
+   224
+  ],
+  "sqlglot/dialects/fabric.py": [
+   32937,
+   198
+  ],
+  "sqlglot/dialects/hive.py": [
+   33135,
+   474
+  ],
+  "sqlglot/dialects/materialize.py": [
+   33609,
+   162
+  ],
+  "sqlglot/dialects/mysql.py": [
+   33771,
+   410
+  ],
+  "sqlglot/dialects/oracle.py": [
+   34181,
+   327
+  ],
+  "sqlglot/dialects/postgres.py": [
+   34508,
+   382
+  ],
+  "sqlglot/dialects/presto.py": [
+   34890,
+   359
+  ],
+  "sqlglot/dialects/prql.py": [
+   35249,
+   192
+  ],
+  "sqlglot/dialects/redshift.py": [
+   35441,
+   307
+  ],
+  "sqlglot/dialects/risingwave.py": [
+   35748,
+   184
+  ],
+  "sqlglot/dialects/singlestore.py": [
+   35932,
+   225
+  ],
+  "sqlglot/dialects/snowflake.py": [
+   36157,
+   574
+  ],
+  "sqlglot/dialects/solr.py": [
+   36731,
+   169
+  ],
+  "sqlglot/dialects/spark.py": [
+   36900,
+   253
+  ],
+  "sqlglot/dialects/spark2.py": [
+   37153,
+   246
+  ],
+  "sqlglot/dialects/sqlite.py": [
+   37399,
+   288
+  ],
+  "sqlglot/dialects/starrocks.py": [
+   37687,
+   239
+  ],
+  "sqlglot/dialects/tableau.py": [
+   37926,
+   168
+  ],
+  "sqlglot/dialects/teradata.py": [
+   38094,
+   226
+  ],
+  "sqlglot/dialects/trino.py": [
+   38320,
+   184
+  ],
+  "sqlglot/dialects/tsql.py": [
+   38504,
+   333
+  ],
+  "sqlglot/diff.py": [
+   38837,
+   1953
+  ],
+  "sqlglot/errors.py": [
+   40790,
+   734
+  ],
+  "sqlglot/executor/__init__.py": [
+   41524,
+   411
+  ],
+  "sqlglot/executor/context.py": [
+   41935,
+   628
+  ],
+  "sqlglot/executor/env.py": [
+   42563,
+   1370
+  ],
+  "sqlglot/executor/python.py": [
+   43933,
+   2800
+  ],
+  "sqlglot/executor/table.py": [
+   46733,
+   795
+  ],
+  "sqlglot/expressions/__init__.py": [
+   47528,
+   270
+  ],
+  "sqlglot/expressions/aggregate.py": [
+   47798,
+   1356
+  ],
+  "sqlglot/expressions/array.py": [
+   49154,
+   1496
+  ],
+  "sqlglot/expressions/builders.py": [
+   50650,
+   2997
+  ],
+  "sqlglot/expressions/constraints.py": [
+   53647,
+   836
+  ],
+  "sqlglot/expressions/core.py": [
+   54483,
+   13114
+  ],
+  "sqlglot/expressions/datatypes.py": [
+   67597,
+   1686
+  ],
+  "sqlglot/expressions/ddl.py": [
+   69283,
+   1308
+  ],
+  "sqlglot/expressions/dml.py": [
+   70591,
+   849
+  ],
+  "sqlglot/expressions/functions.py": [
+   71440,
+   2001
+  ],
+  "sqlglot/expressions/json.py": [
+   73441,
+   931
+  ],
+  "sqlglot/expressions/math.py": [
+   74372,
+   1063
+  ],
+  "sqlglot/expressions/properties.py": [
+   75435,
+   2406
+  ],
+  "sqlglot/expressions/query.py": [
+   77841,
+   6383
+  ],
+  "sqlglot/expressions/string.py": [
+   84224,
+   2012
+  ],
+  "sqlglot/expressions/temporal.py": [
+   86236,
+   2059
+  ],
+  "sqlglot/generator.py": [
+   88295,
+   35226
+  ],
+  "sqlglot/generators/__init__.py": [
+   123521,
+   90
+  ],
+  "sqlglot/generators/athena.py": [
+   123611,
+   628
+  ],
+  "sqlglot/generators/bigquery.py": [
+   124239,
+   3103
+  ],
+  "sqlglot/generators/clickhouse.py": [
+   127342,
+   2788
+  ],
+  "sqlglot/generators/databricks.py": [
+   130130,
+   771
+  ],
+  "sqlglot/generators/dax.py": [
+   130901,
+   118
+  ],
+  "sqlglot/generators/doris.py": [
+   131019,
+   563
+  ],
+  "sqlglot/generators/dremio.py": [
+   131582,
+   449
+  ],
+  "sqlglot/generators/drill.py": [
+   132031,
+   451
+  ],
+  "sqlglot/generators/druid.py": [
+   132482,
+   169
+  ],
+  "sqlglot/generators/duckdb.py": [
+   132651,
+   17808
+  ],
+  "sqlglot/generators/dune.py": [
+   150459,
+   166
+  ],
+  "sqlglot/generators/exasol.py": [
+   150625,
+   1698
+  ],
+  "sqlglot/generators/fabric.py": [
+   152323,
+   581
+  ],
+  "sqlglot/generators/hive.py": [
+   152904,
+   2473
+  ],
+  "sqlglot/generators/materialize.py": [
+   155377,
+   314
+  ],
+  "sqlglot/generators/mysql.py": [
+   155691,
+   2360
+  ],
+  "sqlglot/generators/oracle.py": [
+   158051,
+   803
+  ],
+  "sqlglot/generators/postgres.py": [
+   158854,
+   2510
+  ],
+  "sqlglot/generators/presto.py": [
+   161364,
+   2497
+  ],
+  "sqlglot/generators/prql.py": [
+   163861,
+   118
+  ],
+  "sqlglot/generators/python.py": [
+   163979,
+   608
+  ],
+  "sqlglot/generators/redshift.py": [
+   164587,
+   899
+  ],
+  "sqlglot/generators/risingwave.py": [
+   165486,
+   219
+  ],
+  "sqlglot/generators/singlestore.py": [
+   165705,
+   1315
+  ],
+  "sqlglot/generators/snowflake.py": [
+   167020,
+   4446
+  ],
+  "sqlglot/generators/solr.py": [
+   171466,
+   119
+  ],
+  "sqlglot/generators/spark.py": [
+   171585,
+   747
+  ],
+  "sqlglot/generators/spark2.py": [
+   172332,
+   1194
+  ],
+  "sqlglot/generators/sqlite.py": [
+   173526,
+   2006
+  ],
+  "sqlglot/generators/starrocks.py": [
+   175532,
+   980
+  ],
+  "sqlglot/generators/tableau.py": [
+   176512,
+   278
+  ],
+  "sqlglot/generators/teradata.py": [
+   176790,
+   1000
+  ],
+  "sqlglot/generators/trino.py": [
+   177790,
+   762
+  ],
+  "sqlglot/generators/tsql.py": [
+   178552,
+   3232
+  ],
+  "sqlglot/helper.py": [
+   181784,
+   1894
+  ],
+  "sqlglot/jsonpath.py": [
+   183678,
+   1251
+  ],
+  "sqlglot/lineage.py": [
+   184929,
+   2455
+  ],
+  "sqlglot/optimizer/__init__.py": [
+   187384,
+   281
+  ],
+  "sqlglot/optimizer/annotate_types.py": [
+   187665,
+   5281
+  ],
+  "sqlglot/optimizer/canonicalize.py": [
+   192946,
+   1086
+  ],
+  "sqlglot/optimizer/canonicalize_internal_names.py": [
+   194032,
+   1444
+  ],
+  "sqlglot/optimizer/eliminate_ctes.py": [
+   195476,
+   324
+  ],
+  "sqlglot/optimizer/eliminate_joins.py": [
+   195800,
+   937
+  ],
+  "sqlglot/optimizer/eliminate_subqueries.py": [
+   196737,
+   915
+  ],
+  "sqlglot/optimizer/helpers.py": [
+   197652,
+   358
+  ],
+  "sqlglot/optimizer/isolate_table_selects.py": [
+   198010,
+   276
+  ],
+  "sqlglot/optimizer/journal.py": [
+   198286,
+   206
+  ],
+  "sqlglot/optimizer/merge_subqueries.py": [
+   198492,
+   3274
+  ],
+  "sqlglot/optimizer/normalize.py": [
+   201766,
+   805
+  ],
+  "sqlglot/optimizer/normalize_identifiers.py": [
+   202571,
+   358
+  ],
+  "sqlglot/optimizer/optimize_joins.py": [
+   202929,
+   655
+  ],
+  "sqlglot/optimizer/optimizer.py": [
+   203584,
+   351
+  ],
+  "sqlglot/optimizer/pushdown_predicates.py": [
+   203935,
+   1454
+  ],
+  "sqlglot/optimizer/pushdown_projections.py": [
+   205389,
+   2250
+  ],
+  "sqlglot/optimizer/qualify.py": [
+   207639,
+   298
+  ],
+  "sqlglot/optimizer/qualify_columns.py": [
+   207937,
+   7030
+  ],
+  "sqlglot/optimizer/qualify_tables.py": [
+   214967,
+   1242
+  ],
+  "sqlglot/optimizer/resolver.py": [
+   216209,
+   2373
+  ],
+  "sqlglot/optimizer/scope.py": [
+   218582,
+   4940
+  ],
+  "sqlglot/optimizer/simplify.py": [
+   223522,
+   9362
+  ],
+  "sqlglot/optimizer/unnest_subqueries.py": [
+   232884,
+   2449
+  ],
+  "sqlglot/parser.py": [
+   235333,
+   52415
+  ],
+  "sqlglot/parsers/__init__.py": [
+   287748,
+   85
+  ],
+  "sqlglot/parsers/athena.py": [
+   287833,
+   339
+  ],
+  "sqlglot/parsers/base.py": [
+   288172,
+   157
+  ],
+  "sqlglot/parsers/bigquery.py": [
+   288329,
+   3027
+  ],
+  "sqlglot/parsers/clickhouse.py": [
+   291356,
+   3331
+  ],
+  "sqlglot/parsers/databricks.py": [
+   294687,
+   366
+  ],
+  "sqlglot/parsers/dax.py": [
+   295053,
+   288
+  ],
+  "sqlglot/parsers/doris.py": [
+   295341,
+   707
+  ],
+  "sqlglot/parsers/dremio.py": [
+   296048,
+   446
+  ],
+  "sqlglot/parsers/drill.py": [
+   296494,
+   202
+  ],
+  "sqlglot/parsers/druid.py": [
+   296696,
+   121
+  ],
+  "sqlglot/parsers/duckdb.py": [
+   296817,
+   1955
+  ],
+  "sqlglot/parsers/dune.py": [
+   298772,
+   118
+  ],
+  "sqlglot/parsers/exasol.py": [
+   298890,
+   413
+  ],
+  "sqlglot/parsers/fabric.py": [
+   299303,
+   197
+  ],
+  "sqlglot/parsers/hive.py": [
+   299500,
+   1254
+  ],
+  "sqlglot/parsers/materialize.py": [
+   300754,
+   252
+  ],
+  "sqlglot/parsers/mysql.py": [
+   301006,
+   3076
+  ],
+  "sqlglot/parsers/oracle.py": [
+   304082,
+   1261
+  ],
+  "sqlglot/parsers/postgres.py": [
+   305343,
+   1094
+  ],
+  "sqlglot/parsers/presto.py": [
+   306437,
+   457
+  ],
+  "sqlglot/parsers/prql.py": [
+   306894,
+   769
+  ],
+  "sqlglot/parsers/redshift.py": [
+   307663,
+   561
+  ],
+  "sqlglot/parsers/risingwave.py": [
+   308224,
+   299
+  ],
+  "sqlglot/parsers/singlestore.py": [
+   308523,
+   320
+  ],
+  "sqlglot/parsers/snowflake.py": [
+   308843,
+   4787
+  ],
+  "sqlglot/parsers/solr.py": [
+   313630,
+   136
+  ],
+  "sqlglot/parsers/spark.py": [
+   313766,
+   464
+  ],
+  "sqlglot/parsers/spark2.py": [
+   314230,
+   479
+  ],
+  "sqlglot/parsers/sqlite.py": [
+   314709,
+   1260
+  ],
+  "sqlglot/parsers/starrocks.py": [
+   315969,
+   1165
+  ],
+  "sqlglot/parsers/tableau.py": [
+   317134,
+   135
+  ],
+  "sqlglot/parsers/teradata.py": [
+   317269,
+   1531
+  ],
+  "sqlglot/parsers/trino.py": [
+   318800,
+   1112
+  ],
+  "sqlglot/parsers/tsql.py": [
+   319912,
+   2901
+  ],
+  "sqlglot/planner.py": [
+   322813,
+   2409
+  ],
+  "sqlglot/schema.py": [
+   325222,
+   2867
+  ],
+  "sqlglot/serde.py": [
+   328089,
+   681
+  ],
+  "sqlglot/time.py": [
+   328770,
+   462
+  ],
+  "sqlglot/tokenizer_core.py": [
+   329232,
+   8146
+  ],
+  "sqlglot/tokens.py": [
+   337378,
+   1159
+  ],
+  "sqlglot/transforms.py": [
+   338537,
+   4688
+  ],
+  "sqlglot/trie.py": [
+   343225,
+   323
+  ],
+  "sqlglot/typing/__init__.py": [
+   343548,
+   445
+  ],
+  "sqlglot/typing/bigquery.py": [
+   343993,
+   953
+  ],
+  "sqlglot/typing/clickhouse.py": [
+   344946,
+   138
+  ],
+  "sqlglot/typing/databricks.py": [
+   345084,
+   124
+  ],
+  "sqlglot/typing/duckdb.py": [
+   345208,
+   414
+  ],
+  "sqlglot/typing/hive.py": [
+   345622,
+   217
+  ],
+  "sqlglot/typing/mysql.py": [
+   345839,
+   497
+  ],
+  "sqlglot/typing/postgres.py": [
+   346336,
+   251
+  ],
+  "sqlglot/typing/presto.py": [
+   346587,
+   125
+  ],
+  "sqlglot/typing/redshift.py": [
+   346712,
+   255
+  ],
+  "sqlglot/typing/snowflake.py": [
+   346967,
+   1102
+  ],
+  "sqlglot/typing/spark.py": [
+   348069,
+   133
+  ],
+  "sqlglot/typing/spark2.py": [
+   348202,
+   287
+  ],
+  "sqlglot/typing/sqlite.py": [
+   348489,
+   121
+  ],
+  "sqlglot/typing/tsql.py": [
+   348610,
+   214
+  ]
+ },
+ "format": 1,
+ "set_bytes": 203,
+ "sets": 6036,
+ "sources_sha256": "e3269f5fa8e9159ba9be5aa450b982d562fd77729281e1e1b5e412f0e89467da",
+ "sqlglot_commit": "eb11aec4be8cb2122afe713a4816662c3f0fb2fa",
+ "tests": 1620
+}

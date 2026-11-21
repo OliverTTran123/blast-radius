@@ -6,3 +6,7 @@ extend-exclude = ["score.py"]
 
 [lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[lint.isort]
+# Top-level modules of this repo that are imported by plain name.
+known-first-party = ["selector", "score", "assemble", "statements", "brmap_audit"]

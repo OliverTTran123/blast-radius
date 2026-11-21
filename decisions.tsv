@@ -1,2 +1,3 @@
 date	change	check	verdict	note
 2026-11-21T21:03:13Z	starter baseline: unmodified selector.py from the kit	CHECK simulated=1210.470 misses=0 cpu_median=0.263592 total_median=1210.733592 missed_commits=[]	kept	every test on every commit in 3 workers. oracle floor for the sample is 94.351 s
+2026-11-21T22:12:42Z	static selector from the committed coverage map: statement-level selection, import-time statements select the whole file, unknown paths select everything, longest-first split over 1 to 8 workers	CHECK simulated=312.767 misses=0 cpu_median=0.266487 total_median=313.033487 missed_commits=[]	kept	hypothesis: a test can only fail if it executed the changed statement or opened the changed file. baseline 1210.470 s. no miss on the 30 sample commits. oracle floor 94.351 s

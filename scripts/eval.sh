@@ -5,11 +5,13 @@
 #
 # Steps, each of which fails loudly:
 #   1. every frozen file still has the sha256 recorded in scripts/frozen.sha256
-#   2. the Dockerfile cannot pull the sample answers into the image
-#   3. build with the Makefile's own build command
-#   4. run the image 3 times under the Makefile's exact RUN_FLAGS, inside the
+#   2. the Dockerfile cannot pull the sample answers into the image, and neither
+#      the selector nor the map builder names the answers file
+#   3. the behavior tests in tests/ pass
+#   4. build with the Makefile's own build command
+#   5. run the image 3 times under the Makefile's exact RUN_FLAGS, inside the
 #      3 minute limit, reading each run's CPU from the container's cgroup
-#   5. score every output with score.py
+#   6. score every output with score.py
 #
 # stdout carries exactly one line:
 #
@@ -44,16 +46,16 @@ fail() {
 
 mkdir -p "$OUT"
 rm -f "$OUT"/run*.jsonl "$OUT"/run*.stderr "$OUT"/run*.score \
-  "$OUT/check.txt" "$OUT/per_commit.tsv" "$OUT/build.log"
+  "$OUT/check.txt" "$OUT/per_commit.tsv" "$OUT/build.log" "$OUT/tests.log"
 
-step "1/5 frozen files"
+step "1/6 frozen files"
 sha256sum --check --strict --quiet scripts/frozen.sha256 >&2 ||
   fail "a frozen file does not match scripts/frozen.sha256"
 recorded=$(sed -n 's/^[0-9a-f]\{64\}  \(sample\/.*\)$/\1/p' scripts/frozen.sha256 | LC_ALL=C sort)
 present=$(find sample -type f | LC_ALL=C sort)
 [ "$recorded" = "$present" ] || fail "files were added to or removed from sample/"
 
-step "2/5 Dockerfile"
+step "2/6 answers stay out of the image, the selector and the map builder"
 # Join continuation lines so an instruction cannot hide its source on the next line.
 flat=$(sed -e ':a' -e '/\\$/N' -e 's/\\\n/ /' -e 'ta' Dockerfile)
 whole_context='^[[:space:]]*(COPY|ADD)[[:space:]]+(--[^[:space:]]+[[:space:]]+)*(\[[[:space:]]*")?(\.|\./|\.\.|\*)("|[[:space:]]|$)'
@@ -63,13 +65,31 @@ fi
 if grep -nEi 'answers|^[[:space:]]*(COPY|ADD)[[:space:]].*sample|type=bind' <<<"$flat" >&2; then
   fail "Dockerfile mentions the answers, copies from sample/ or bind-mounts the context"
 fi
+# Only scripts/ (this harness) and score.py may read the sample answers.
+sources=(selector.py)
+[ -d tools ] && sources+=(tools)
+if grep -rnI 'answers\.json' "${sources[@]}" >&2; then
+  fail "selector.py or tools/ names the answers file"
+fi
+if grep -nE 'sample/|/sample' selector.py >&2; then
+  fail "selector.py refers to sample/; at run time it has only /data and its map"
+fi
+
+if [ -d tests ]; then
+  step "3/6 behavior tests"
+  python3 -B -m unittest discover -s "$ROOT/tests" >"$OUT/tests.log" 2>&1 || {
+    tail -n 40 "$OUT/tests.log" >&2
+    fail "the behavior tests in tests/ do not pass"
+  }
+  log "    $(tail -n 3 "$OUT/tests.log" | head -n 1)"
+fi
 
 make_var() { make --no-print-directory --eval "eval-print: ; @echo \$($1)" eval-print; }
 IMAGE=$(make_var IMAGE)
 read -r -a RUN_FLAGS <<<"$(make_var RUN_FLAGS)"
 [ -n "$IMAGE" ] && [ "${#RUN_FLAGS[@]}" -gt 0 ] || fail "could not read IMAGE and RUN_FLAGS from the Makefile"
 
-step "3/5 build $IMAGE"
+step "4/6 build $IMAGE"
 make --no-print-directory build >"$OUT/build.log" 2>&1 || {
   tail -n 40 "$OUT/build.log" >&2
   fail "docker build failed"
@@ -83,7 +103,7 @@ words = (config.get("Entrypoint") or []) + (config.get("Cmd") or [])
 sys.stdout.write("".join(word + "\0" for word in words))')
 [ "${#IMAGE_ARGV[@]}" -gt 0 ] || fail "the image has no command"
 
-step "4/5 $RUNS runs under the Makefile's RUN_FLAGS: ${IMAGE_ARGV[*]}"
+step "5/6 $RUNS runs under the Makefile's RUN_FLAGS: ${IMAGE_ARGV[*]}"
 for run in $(seq 1 "$RUNS"); do
   cd "$ROOT"
   name="blast-radius-eval-$$-$run"
@@ -120,7 +140,7 @@ for run in $(seq 1 "$RUNS"); do
   log "    run $run: cpu=${cpu}s wall=${wall}s stdout=${bytes}B"
 done
 
-step "5/5 report"
+step "6/6 report"
 set +e
 python3 "$ROOT/scripts/eval_report.py" "$OUT" "$RUNS" | tee "$OUT/check.txt"
 status=${PIPESTATUS[0]}

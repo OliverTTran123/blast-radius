@@ -1,0 +1,4 @@
+# Store and check out every file byte for byte. This machine has
+# core.autocrlf=true, which would otherwise rewrite the LF-only patches,
+# tests.json, Makefile and Dockerfile as CRLF on the next checkout.
+* -text

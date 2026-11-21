@@ -1,0 +1,35 @@
+# Virtual environments
+.venv*/
+venv*/
+env/
+ENV/
+
+# Python and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Raw coverage data. Maps we derive from it are committed as plain files, so
+# nothing broader than these names is ignored (coverage.json is NOT ignored).
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Any local sqlglot checkout or unpacked archive. The Dockerfile fetches
+# sqlglot at the pinned commit; it is never committed (no submodules, no LFS).
+# Do not give our own directories these names.
+sqlglot/
+sqlglot-*/
+
+# Secrets. Keys never go in any file that is tracked.
+.env
+.env.*
+
+# Written by `make sample` and `make check`
+/output.jsonl
+
+# The kit archive, already unpacked in place
+/blast-radius-sample.tar.gz

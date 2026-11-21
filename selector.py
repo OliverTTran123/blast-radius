@@ -15,8 +15,9 @@ How a changed path is handled:
                    - Same tree (only comments, blank lines or layout changed):
                      nothing the interpreter runs is different, so only the
                      tests that read the file as text are selected.
-                   - The patched file does not parse: every test that ran any
-                     line of the file, because importing it now fails.
+                   - The patched file does not parse or does not compile:
+                     every test that ran any line of the file, because
+                     importing it now fails.
                    - Otherwise each changed or deleted old line goes to the
                      innermost statement that owns it and selects the tests
                      that executed that statement. A statement that runs at
@@ -197,19 +198,27 @@ def apply_hunks(
     return patched
 
 
-def syntax_tree(lines: list[str]) -> tuple[bool, str | None]:
-    """(whether the module parses, its syntax tree as text with positions left out).
+def syntax_tree(lines: list[str], compile_as: str | None = None) -> tuple[bool, str | None]:
+    """(whether the module is valid Python, its syntax tree as text with positions left out).
 
     The lines are joined and handed over as bytes, not text, so an encoding
     declaration, or bytes that are not valid in the file's encoding, count
     exactly as they would when Python imports the file. The tree is None when
-    the module parses but is nested too deep to write out.
+    the module is valid but nested too deep to write out.
+
+    With compile_as, a file name, the module must also compile. Some errors only
+    show then: a duplicate argument name or a `break` outside a loop parses, but
+    importing the file fails all the same. Nothing is written or run.
     """
+    source = "\n".join(lines).encode("latin-1")
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            tree = ast.parse("\n".join(lines).encode("latin-1"))
-    except (SyntaxError, ValueError, RecursionError, MemoryError):
+            tree = ast.parse(source)
+            if compile_as is not None:
+                # dont_inherit: compile as an import would, not with this module's __future__.
+                compile(source, compile_as, "exec", dont_inherit=True)
+    except (SyntaxError, ValueError, OverflowError, RecursionError, MemoryError):
         return False, None
     try:
         return True, ast.dump(tree)  # include_attributes is False unless asked for
@@ -394,10 +403,12 @@ class Selector:
                 log(f"{commit}: every test: the patch does not fit the pinned {path}")
                 return None
             readers = self.tests(source.readers)
-            parses, tree = syntax_tree(patched)
-            if not parses:
+            valid, tree = syntax_tree(patched, compile_as=path)
+            if not valid:
                 part = readers | self.tests(source.any_line)
-                log(f"{commit}: {path} no longer parses: the {part.bit_count()} tests that ran it")
+                log(
+                    f"{commit}: {path} no longer compiles: the {part.bit_count()} tests that ran it"
+                )
                 return part
             if tree is not None and tree_digest(tree) == pinned[1]:
                 log(

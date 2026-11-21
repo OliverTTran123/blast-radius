@@ -293,7 +293,16 @@ class TestFileThatNoLongerParses(SelectorCase):
         # Line rules alone would stop at test 0, the only one that ran `return`.
         broken = TEXT_SOURCE.replace("a + \\\n", "a + \\\n        # note\n")
         self.assertEqual(self.select(patch(TEXT, TEXT_SOURCE, broken)), {0, 1})
-        self.assertIn("no longer parses", self.log.getvalue())
+        self.assertIn("no longer compiles", self.log.getvalue())
+
+    def test_code_that_parses_but_does_not_compile(self):
+        # Only test 3 ran `return 0`. Each of these parses, yet importing the file fails.
+        for text in ("    return (lambda a, a: 0)", "    break", "    nonlocal y"):
+            with self.subTest(text):
+                self.assertEqual(self.edit(replaced(25, text)), {0, 1, 2, 3, 4})
+                self.assertIn("no longer compiles", self.log.getvalue())
+        self.assertEqual(self.edit(replaced(24, "def second(a, a):")), {0, 1, 2, 3, 4})
+        self.assertIn("no longer compiles", self.log.getvalue())
 
     def test_unbalanced_bracket_in_a_function_few_tests_call(self):
         self.assertEqual(self.edit(replaced(25, "    return (0")), {0, 1, 2, 3, 4})

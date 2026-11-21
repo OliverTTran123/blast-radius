@@ -1,0 +1,2 @@
+date	change	check	verdict	note
+2026-11-21T21:03:13Z	starter baseline: unmodified selector.py from the kit	CHECK simulated=1210.470 misses=0 cpu_median=0.263592 total_median=1210.733592 missed_commits=[]	kept	every test on every commit in 3 workers. oracle floor for the sample is 94.351 s

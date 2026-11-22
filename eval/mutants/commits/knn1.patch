@@ -1,0 +1,12 @@
+diff --git a/sqlglot/optimizer/journal.py b/sqlglot/optimizer/journal.py
+index 5ebc8ba..2c5ab2b 100644
+--- a/sqlglot/optimizer/journal.py
++++ b/sqlglot/optimizer/journal.py
+@@ -8,6 +8,7 @@ from sqlglot import exp
+ JournalEntry = tuple[exp.Expr, str, t.Any]
+ Journal = list[JournalEntry]
+ 
++# Fast path
+ 
+ def record(journal: Journal, node: exp.Expr, arg_key: str) -> None:
+     """Records the current value of `node.args[arg_key]` so `revert` can restore it.

@@ -1,0 +1,13 @@
+diff --git a/sqlglot/optimizer/unnest_subqueries.py b/sqlglot/optimizer/unnest_subqueries.py
+index e84b207..8c116ce 100644
+--- a/sqlglot/optimizer/unnest_subqueries.py
++++ b/sqlglot/optimizer/unnest_subqueries.py
+@@ -279,7 +279,7 @@ def decorrelate(select, parent_select, external_columns, next_alias_name):
+                 if all(column.table in available_source_aliases for column in external_columns):
+                     on_clause_join_index = index
+                 break
+-            if not join.is_semi_or_anti_join:
++            if join.is_semi_or_anti_join:
+                 available_source_aliases.add(join.alias_or_name)
+ 
+     if isinstance(on_clause_ancestor, exp.Join) and on_clause_join_index is None:

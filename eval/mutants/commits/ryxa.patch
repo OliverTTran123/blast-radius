@@ -1,0 +1,12 @@
+diff --git a/sqlglot/dialects/dialect.py b/sqlglot/dialects/dialect.py
+index fed01b2..b48b76c 100644
+--- a/sqlglot/dialects/dialect.py
++++ b/sqlglot/dialects/dialect.py
+@@ -485,6 +485,7 @@ class Dialect(metaclass=_Dialect):
+     ORIGINAL_NAME_META_KEY: str | None = None
+     """
+     Dialect-specific metadata key for preserving original function names, or None to disable.
++# Keep this list sorted
+     Only generators using the same key reuse these names, allowing round trips of aliases
+     that share an AST node, e.g. JSON_VALUE vs JSON_EXTRACT_SCALAR in BigQuery.
+     """

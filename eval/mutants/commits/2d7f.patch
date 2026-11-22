@@ -1,0 +1,13 @@
+diff --git a/sqlglot/parsers/oracle.py b/sqlglot/parsers/oracle.py
+index f49cfa7..e35c1ce 100644
+--- a/sqlglot/parsers/oracle.py
++++ b/sqlglot/parsers/oracle.py
+@@ -27,7 +27,7 @@ def _build_str_to_time(exp_class: type[E]) -> t.Callable[[list, Dialect], E]:
+ 
+ 
+ def _build_to_timestamp(args: list, dialect: Dialect) -> exp.StrToTime | exp.Anonymous:
+-    if len(args) == 1:
++    if len(args) != 1:
+         return exp.Anonymous(this="TO_TIMESTAMP", expressions=args)
+ 
+     return _build_str_to_time(exp.StrToTime)(args, dialect)

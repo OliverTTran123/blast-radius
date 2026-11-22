@@ -1,0 +1,13 @@
+diff --git a/sqlglot/typing/snowflake.py b/sqlglot/typing/snowflake.py
+index 7898842..8bb80ce 100644
+--- a/sqlglot/typing/snowflake.py
++++ b/sqlglot/typing/snowflake.py
+@@ -244,7 +244,7 @@ def _annotate_floor_ceil(self: TypeAnnotator, expression: exp.Expr) -> exp.Expr:
+         # A scale argument changes Snowflake's implicit string coercion from FLOAT to NUMBER.
+         return self._set_type(
+             expression,
+-            exp.DType.DOUBLE if expression.args.get("decimals") is None else exp.DType.UNKNOWN,
++            exp.DType.DOUBLE if expression.args.get("decimals") == None else exp.DType.UNKNOWN,
+         )
+     if expression.this.is_type(exp.DType.VARIANT):
+         return self._set_type(expression, exp.DType.DOUBLE)

@@ -1,0 +1,12 @@
+diff --git a/sqlglot/dialects/redshift.py b/sqlglot/dialects/redshift.py
+index 5eca01b..97e1045 100644
+--- a/sqlglot/dialects/redshift.py
++++ b/sqlglot/dialects/redshift.py
+@@ -26,6 +26,7 @@ class Redshift(Postgres):
+ 
+     # ref: https://docs.aws.amazon.com/redshift/latest/dg/r_FORMAT_strings.html
+     TIME_FORMAT = "'YYYY-MM-DD HH24:MI:SS'"
++    # Handled by the caller
+ 
+     TIME_MAPPING = {
+         **Postgres.TIME_MAPPING,

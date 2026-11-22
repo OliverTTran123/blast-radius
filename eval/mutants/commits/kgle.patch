@@ -1,0 +1,13 @@
+diff --git a/sqlglot/transforms.py b/sqlglot/transforms.py
+index 030d48d..283d923 100644
+--- a/sqlglot/transforms.py
++++ b/sqlglot/transforms.py
+@@ -160,7 +160,7 @@ def eliminate_distinct_on(expression: exp.Expr) -> exp.Expr:
+     ):
+         row_number_window_alias = find_new_name(expression.named_selects, "_row_number")
+ 
+-        distinct_cols = expression.args["distinct"].pop().args["on"].expressions
++        distinct_cols = expression.args["distinct_"].pop().args["on"].expressions
+         window = exp.Window(this=exp.RowNumber(), partition_by=distinct_cols)
+ 
+         order: exp.Order | None = expression.args.get("order")

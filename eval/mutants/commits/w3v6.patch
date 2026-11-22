@@ -1,0 +1,13 @@
+diff --git a/sqlglot/parsers/databricks.py b/sqlglot/parsers/databricks.py
+index ff179da..ec2e1b4 100644
+--- a/sqlglot/parsers/databricks.py
++++ b/sqlglot/parsers/databricks.py
+@@ -83,7 +83,7 @@ class DatabricksParser(SparkParser):
+ 
+     def _parse_curdate(self) -> exp.CurrentDate:
+         # CURDATE, an alias for CURRENT_DATE, has optional parentheses
+-        if self._match(TokenType.L_PAREN):
++        if not self._match(TokenType.L_PAREN):
+             self._match_r_paren()
+         return self.expression(exp.CurrentDate())
+ 

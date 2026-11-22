@@ -1,0 +1,13 @@
+diff --git a/sqlglot/generators/duckdb.py b/sqlglot/generators/duckdb.py
+index a0fa169..2cd3125 100644
+--- a/sqlglot/generators/duckdb.py
++++ b/sqlglot/generators/duckdb.py
+@@ -3657,7 +3657,7 @@ class DuckDBGenerator(generator.Generator):
+         k = expression.this
+         exprs = expression.expressions
+ 
+-        if len(exprs) != 1 or isinstance(exprs[0], exp.Star):
++        if len(exprs) == 1 or isinstance(exprs[0], exp.Star):
+             self.unsupported(
+                 "MINHASH with multiple expressions or * requires manual query restructuring"
+             )

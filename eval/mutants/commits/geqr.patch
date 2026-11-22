@@ -1,0 +1,13 @@
+diff --git a/sqlglot/parsers/redshift.py b/sqlglot/parsers/redshift.py
+index 5faade4..63ff492 100644
+--- a/sqlglot/parsers/redshift.py
++++ b/sqlglot/parsers/redshift.py
+@@ -119,7 +119,7 @@ class RedshiftParser(PostgresParser):
+         this = self._parse_column()
+         keep: list[exp.Expr] = []
+         set_: list[exp.Expr] = []
+-        if self._match(TokenType.KEEP):
++        if not self._match(TokenType.KEEP):
+             keep = self._parse_csv(self._parse_primary)
+         if self._match(TokenType.SET):
+             set_ = self._parse_csv(self._parse_expression)

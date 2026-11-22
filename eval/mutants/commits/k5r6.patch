@@ -1,0 +1,13 @@
+diff --git a/sqlglot/optimizer/optimizer.py b/sqlglot/optimizer/optimizer.py
+index fb8d216..2a34f54 100644
+--- a/sqlglot/optimizer/optimizer.py
++++ b/sqlglot/optimizer/optimizer.py
+@@ -100,7 +100,7 @@ def optimize(
+         "schema": schema,
+         "dialect": dialect,
+         "sql": sql,
+-        "isolate_tables": True,  # needed for other optimizations to perform well
++        "isolate_tables": False,  # needed for other optimizations to perform well
+         "quote_identifiers": False,
+         **kwargs,
+     }

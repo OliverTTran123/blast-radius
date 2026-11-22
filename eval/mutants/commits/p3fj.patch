@@ -1,0 +1,13 @@
+diff --git a/sqlglot/dialects/oracle.py b/sqlglot/dialects/oracle.py
+index 9330c03..3cc3214 100644
+--- a/sqlglot/dialects/oracle.py
++++ b/sqlglot/dialects/oracle.py
+@@ -59,7 +59,7 @@ class Oracle(Dialect):
+         # `WHERE "ROWNUM" = ...` does not work but `WHERE ROWNUM = ...` does
+         return (
+             identifier.quoted or not isinstance(identifier.parent, exp.Pseudocolumn)
+-        ) and super().can_quote(identifier, identify=identify)
++        ) or super().can_quote(identifier, identify=identify)
+ 
+     class Tokenizer(tokens.Tokenizer):
+         VAR_SINGLE_TOKENS = {"@", "$", "#"}

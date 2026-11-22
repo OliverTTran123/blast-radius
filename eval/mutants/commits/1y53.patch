@@ -1,0 +1,13 @@
+diff --git a/sqlglot/generator.py b/sqlglot/generator.py
+index 573d3c1..834f5d5 100644
+--- a/sqlglot/generator.py
++++ b/sqlglot/generator.py
+@@ -2296,7 +2296,7 @@ class Generator:
+     def likeproperty_sql(self, expression: exp.LikeProperty) -> str:
+         if self.SUPPORTS_CREATE_TABLE_LIKE:
+             options = " ".join(f"{e.name} {self.sql(e, 'value')}" for e in expression.expressions)
+-            options = f" {options}" if options else ""
++            options = f" {options}" if options else "_"
+ 
+             like = f"LIKE {self.sql(expression, 'this')}{options}"
+             if self.LIKE_PROPERTY_INSIDE_SCHEMA and not isinstance(expression.parent, exp.Schema):

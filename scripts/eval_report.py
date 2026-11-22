@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """Per-commit table and CHECK line for scripts/eval.sh.
 
-Usage: eval_report.py <eval_out_dir> <runs>
+Usage: eval_report.py <eval_out_dir> <runs> <data_dir> <answers.json> <prefix>
+
+data_dir holds tests.json and commits/, answers.json the tests each commit
+breaks, in the kit's format. The prefix starts the summary line: CHECK for the
+kit's sample, anything else for another set, which also gets its oracle total
+on the line.
 
 score.py is the only arbiter of cost here. Each per-commit number comes from
 its evaluate_run on that commit's line alone, and the per-commit sum is checked
 against the total score.py printed for the whole run. This script and score.py
-are the only code that reads sample/answers.json.
+are the only code that reads a set's answers.
 """
 
 from __future__ import annotations
@@ -20,7 +25,6 @@ sys.path.insert(0, str(ROOT))
 
 import score  # noqa: E402  the frozen scorer at the repo root
 
-SAMPLE = ROOT / "sample"
 SEARCH_NODE_BUDGET = 2_000_000
 SEARCH_ITEM_LIMIT = 200
 
@@ -151,8 +155,9 @@ def oracle_workers(failing: list[int], duration_ms: dict[int, int]) -> tuple[lis
 
 def main(arguments: list[str]) -> int:
     out, run_count = Path(arguments[0]), int(arguments[1])
-    tests = json.loads((SAMPLE / "tests.json").read_text("utf-8"))["tests"]
-    answers = json.loads((SAMPLE / "answers.json").read_text("utf-8"))["commits"]
+    data, answers_file, prefix = Path(arguments[2]), Path(arguments[3]), arguments[4]
+    tests = json.loads((data / "tests.json").read_text("utf-8"))["tests"]
+    answers = json.loads(answers_file.read_text("utf-8"))["commits"]
     # Only used to search for the oracle split; its cost is then read back from evaluate_run.
     duration_ms = {test["number"]: score._duration_milliseconds(test["seconds"]) for test in tests}
 
@@ -246,9 +251,11 @@ def main(arguments: list[str]) -> int:
         f" | board score (middle total, rounded to a tenth): {board // 10}.{board % 10}",
         file=sys.stderr,
     )
+    # The sample's line keeps the exact shape decisions.tsv records. Other sets add the oracle.
+    oracle = "" if prefix == "CHECK" else f" oracle={format_fixed(oracle_sum, 3)}"
     print(
-        f"CHECK simulated={format_fixed(middle['simulated_ms'], 3)} misses={middle['misses']}"
-        f" cpu_median={format_fixed(cpu_median, 6)}"
+        f"{prefix} simulated={format_fixed(middle['simulated_ms'], 3)} misses={middle['misses']}"
+        f"{oracle} cpu_median={format_fixed(cpu_median, 6)}"
         f" total_median={format_fixed(middle['total_us'], 6)}"
         f" missed_commits=[{','.join(middle['missed'])}]"
     )
@@ -260,5 +267,5 @@ if __name__ == "__main__":
         sys.exit(main(sys.argv[1:]))
     except Failure as failure:
         print(f"eval: FAILED: {failure}", file=sys.stderr)
-        print(f"CHECK FAILED {failure}")
+        print(f"{sys.argv[5] if len(sys.argv) > 5 else 'CHECK'} FAILED {failure}")
         sys.exit(1)

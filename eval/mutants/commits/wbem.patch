@@ -1,0 +1,13 @@
+diff --git a/sqlglot/optimizer/qualify_columns.py b/sqlglot/optimizer/qualify_columns.py
+index a7a0c01..8630032 100644
+--- a/sqlglot/optimizer/qualify_columns.py
++++ b/sqlglot/optimizer/qualify_columns.py
+@@ -944,7 +944,7 @@ def _qualify_positional_column(
+     if isinstance(column_source, Scope):
+         source_expression = column_source.expression
+         if not isinstance(source_expression, exp.Query):
+-            return True
++            return False
+ 
+         source_selects = source_expression.selects
+         selection = (

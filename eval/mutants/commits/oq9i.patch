@@ -1,0 +1,13 @@
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index 456314b..e6a4474 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -9302,7 +9302,7 @@ class Parser:
+         return self._parse_placeholder()
+ 
+     def _advance_any(self, ignore_reserved: bool = False) -> Token | None:
+-        if self._curr and (ignore_reserved or self._curr.token_type not in self.RESERVED_TOKENS):
++        if self._curr and (ignore_reserved and self._curr.token_type not in self.RESERVED_TOKENS):
+             self._advance()
+             return self._prev
+         return None

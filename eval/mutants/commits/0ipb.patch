@@ -1,0 +1,13 @@
+diff --git a/sqlglot/planner.py b/sqlglot/planner.py
+index cdf8bbd..54e9e02 100644
+--- a/sqlglot/planner.py
++++ b/sqlglot/planner.py
+@@ -331,7 +331,7 @@ class Step:
+         if self.offset:
+             lines.append(f"{nested}Offset: {self.offset}")
+ 
+-        if self.dependencies:
++        if not self.dependencies:
+             lines.append(f"{nested}Dependencies:")
+             for dependency in self.dependencies:
+                 lines.append("  " + dependency.to_s(level + 1))

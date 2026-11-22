@@ -1,0 +1,13 @@
+diff --git a/sqlglot/optimizer/canonicalize_internal_names.py b/sqlglot/optimizer/canonicalize_internal_names.py
+index 087390b..f2614eb 100644
+--- a/sqlglot/optimizer/canonicalize_internal_names.py
++++ b/sqlglot/optimizer/canonicalize_internal_names.py
+@@ -288,7 +288,7 @@ def canonicalize_internal_names(expression: E) -> E:
+ 
+         # Unqualified alias references (ORDER BY a, HAVING a > 5, ...)
+         for col in find_all_in_scope(scope_expr, exp.Column):
+-            if not col.table and col.name in output_map:
++            if not col.table or col.name in output_map:
+                 _canon(col.this, output_map[col.name])
+ 
+         # UBN matches branches by original alias. When both branches are internal

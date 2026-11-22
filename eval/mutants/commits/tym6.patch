@@ -1,0 +1,13 @@
+diff --git a/sqlglot/optimizer/canonicalize.py b/sqlglot/optimizer/canonicalize.py
+index ac8a541..a2e4ef2 100644
+--- a/sqlglot/optimizer/canonicalize.py
++++ b/sqlglot/optimizer/canonicalize.py
+@@ -86,7 +86,7 @@ def add_text_to_concat(node: exp.Expr) -> exp.Expr:
+             expressions=[node.left, node.right],
+             # All known dialects, i.e. Redshift and T-SQL, that support
+             # concatenating strings with the + operator do not coalesce NULLs.
+-            coalesce=False,
++            coalesce=True,
+         )
+     return node
+ 

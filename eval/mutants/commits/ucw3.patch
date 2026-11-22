@@ -1,0 +1,12 @@
+diff --git a/sqlglot/jsonpath.py b/sqlglot/jsonpath.py
+index fd5a181..7c6f23a 100644
+--- a/sqlglot/jsonpath.py
++++ b/sqlglot/jsonpath.py
+@@ -28,6 +28,7 @@ class JSONPathTokenizer(Tokenizer):
+         "$": TokenType.DOLLAR,
+         "*": TokenType.STAR,
+     }
++    # Assumes a normalized tree
+ 
+     KEYWORDS = {
+         "..": TokenType.DOT,

@@ -1,0 +1,13 @@
+diff --git a/sqlglot/dialects/mysql.py b/sqlglot/dialects/mysql.py
+index 825f54d..6b86d99 100644
+--- a/sqlglot/dialects/mysql.py
++++ b/sqlglot/dialects/mysql.py
+@@ -117,7 +117,7 @@ class MySQL(Dialect):
+             "MOD": TokenType.MOD,
+             "SEPARATOR": TokenType.SEPARATOR,
+             "SERIAL": TokenType.SERIAL,
+-            "SIGNED": TokenType.BIGINT,
++            "SIGNED_": TokenType.BIGINT,
+             "SIGNED INTEGER": TokenType.BIGINT,
+             "START": TokenType.BEGIN,
+             "TIMESTAMP": TokenType.TIMESTAMPTZ,

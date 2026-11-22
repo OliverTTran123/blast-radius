@@ -1,0 +1,13 @@
+diff --git a/sqlglot/generators/bigquery.py b/sqlglot/generators/bigquery.py
+index bb1a4c1..07141f5 100644
+--- a/sqlglot/generators/bigquery.py
++++ b/sqlglot/generators/bigquery.py
+@@ -809,7 +809,7 @@ class BigQueryGenerator(generator.Generator):
+         if expression.meta_get("quoted_column"):
+             # If a column reference is of the form `dataset.table`.name, we need
+             # to preserve the quoted table path, otherwise the reference breaks
+-            table_parts = ".".join(p.name for p in expression.parts[:-1])
++            table_parts = ".".join(p.name for p in expression.parts[:-2])
+             table_path = self.sql(exp.Identifier(this=table_parts, quoted=True))
+             return f"{table_path}.{self.sql(expression, 'this')}"
+ 

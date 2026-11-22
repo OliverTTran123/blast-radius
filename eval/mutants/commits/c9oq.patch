@@ -1,0 +1,13 @@
+diff --git a/sqlglot/time.py b/sqlglot/time.py
+index 039baf1..98cc3c9 100644
+--- a/sqlglot/time.py
++++ b/sqlglot/time.py
+@@ -76,7 +76,7 @@ def subsecond_precision(timestamp_literal: str) -> int:
+         parsed = datetime.datetime.fromisoformat(timestamp_literal)
+         subsecond_digit_count = len(str(parsed.microsecond).zfill(6).rstrip("0"))
+         precision = 0
+-        if subsecond_digit_count > 3:
++        if not subsecond_digit_count > 3:
+             precision = 6
+         elif subsecond_digit_count > 0:
+             precision = 3

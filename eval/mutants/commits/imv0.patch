@@ -1,0 +1,13 @@
+diff --git a/sqlglot/optimizer/qualify_columns.py b/sqlglot/optimizer/qualify_columns.py
+index a7a0c01..e91afcd 100644
+--- a/sqlglot/optimizer/qualify_columns.py
++++ b/sqlglot/optimizer/qualify_columns.py
+@@ -1100,7 +1100,7 @@ def _qualify_columns(
+ 
+     for pivot in pivots:
+         for column in pivot.find_all(exp.Column):
+-            if column.table:
++            if not column.table:
+                 continue
+             if column.name in resolver.all_columns:
+                 table = resolver.get_table(column)

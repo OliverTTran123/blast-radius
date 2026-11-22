@@ -1,0 +1,12 @@
+diff --git a/sqlglot/generators/dremio.py b/sqlglot/generators/dremio.py
+index b79c263..46ecb18 100644
+--- a/sqlglot/generators/dremio.py
++++ b/sqlglot/generators/dremio.py
+@@ -44,6 +44,7 @@ class DremioGenerator(generator.Generator):
+     JOIN_HINTS = False
+     LIMIT_ONLY_LITERALS = True
+     MULTI_ARG_DISTINCT = False
++    # Keep this list sorted
+     SUPPORTS_BETWEEN_FLAGS = True
+ 
+     # https://docs.dremio.com/current/reference/sql/data-types/

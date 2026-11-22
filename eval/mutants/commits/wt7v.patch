@@ -1,0 +1,13 @@
+diff --git a/sqlglot/parsers/drill.py b/sqlglot/parsers/drill.py
+index 73a3c03..6e6a824 100644
+--- a/sqlglot/parsers/drill.py
++++ b/sqlglot/parsers/drill.py
+@@ -16,7 +16,7 @@ def _build_ilike(args: list) -> exp.Expr:
+ class DrillParser(parser.Parser):
+     IS_PREDICATE_PRECEDENCE = IsPredicatePrecedence.COMPARISON
+ 
+-    STRICT_CAST = False
++    STRICT_CAST = True
+ 
+     TABLE_ALIAS_TOKENS = parser.Parser.TABLE_ALIAS_TOKENS | {
+         TokenType.ANTI,

@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # The one measurement for this track. Run it through WSL:
 #
-#   wsl -d Ubuntu -- bash scripts/eval.sh
+#   wsl -d Ubuntu -- bash scripts/eval.sh            the kit's 30 sample commits
+#   wsl -d Ubuntu -- bash scripts/eval.sh mutants    our own labeled mutants (eval/mutants)
 #
-# Steps, each of which fails loudly:
+# Both sets go through the same steps, each of which fails loudly:
 #   1. every frozen file still has the sha256 recorded in scripts/frozen.sha256
 #   2. the Dockerfile cannot pull the sample answers into the image, and neither
 #      the selector nor the map builder names the answers file
@@ -13,17 +14,40 @@
 #      3 minute limit, reading each run's CPU from the container's cgroup
 #   6. score every output with score.py
 #
-# stdout carries exactly one line:
+# stdout carries exactly one line. For the sample:
 #
 #   CHECK simulated=<s> misses=<n> cpu_median=<s> total_median=<s> missed_commits=[ids]
 #
+# and for the mutants, so the two can never be mistaken for each other:
+#
+#   CHECK-MUTANTS simulated=<s> misses=<n> oracle=<s> cpu_median=<s> total_median=<s> missed_commits=[ids]
+#
 # Progress and the per-commit table go to stderr. Artifacts go to $EVAL_OUT
-# (default /tmp/blast-radius-eval), outside the repo.
+# (default /tmp/blast-radius-eval), outside the repo; the mutants' go to its
+# mutants/ subdirectory, so scripts/log.sh keeps reading the sample's CHECK line.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 ROOT=$PWD
 OUT=${EVAL_OUT:-/tmp/blast-radius-eval}
+SET=${1:-sample}
+case "$SET" in
+  sample)
+    PREFIX=CHECK
+    DATA=$ROOT/sample
+    ANSWERS=$ROOT/sample/answers.json
+    ;;
+  mutants)
+    PREFIX=CHECK-MUTANTS
+    OUT=$OUT/mutants
+    DATA=$OUT/data
+    ANSWERS=$ROOT/eval/mutants/answers.json
+    ;;
+  *)
+    echo "usage: $0 [sample|mutants]" >&2
+    exit 2
+    ;;
+esac
 RUNS=3
 LIMIT_S=${LIMIT_S:-180} # README: 3 minutes for the whole batch
 STDOUT_LIMIT=2000000    # README: stdout may hold 2 MB
@@ -40,13 +64,24 @@ step() {
 }
 fail() {
   log "FAILED: $*"
-  echo "CHECK FAILED $*" | tee "$OUT/check.txt"
+  echo "$PREFIX FAILED $*" | tee "$OUT/check.txt"
   exit 1
 }
 
 mkdir -p "$OUT"
 rm -f "$OUT"/run*.jsonl "$OUT"/run*.stderr "$OUT"/run*.score \
   "$OUT/check.txt" "$OUT/per_commit.tsv" "$OUT/build.log" "$OUT/tests.log"
+
+if [ "$SET" = mutants ]; then
+  # The mutants use the kit's test list. Lay the two out like sample/, so the
+  # Makefile's own flags can mount them.
+  [ -f "$ANSWERS" ] || fail "eval/mutants has no labels yet: run eval/mutants/run.sh"
+  rm -rf "$DATA"
+  mkdir -p "$DATA/commits"
+  cp "$ROOT/sample/tests.json" "$DATA/tests.json"
+  cp "$ROOT"/eval/mutants/commits/*.patch "$DATA/commits/"
+fi
+log "set: $SET ($(find "$DATA/commits" -name '*.patch' | wc -l) commits)"
 
 step "1/6 frozen files"
 sha256sum --check --strict --quiet scripts/frozen.sha256 >&2 ||
@@ -62,8 +97,8 @@ whole_context='^[[:space:]]*(COPY|ADD)[[:space:]]+(--[^[:space:]]+[[:space:]]+)*
 if grep -nEi "$whole_context" <<<"$flat" >&2; then
   fail "Dockerfile copies the whole build context; give each path its own COPY line"
 fi
-if grep -nEi 'answers|^[[:space:]]*(COPY|ADD)[[:space:]].*sample|type=bind' <<<"$flat" >&2; then
-  fail "Dockerfile mentions the answers, copies from sample/ or bind-mounts the context"
+if grep -nEi 'answers|^[[:space:]]*(COPY|ADD)[[:space:]].*(sample|eval)|type=bind' <<<"$flat" >&2; then
+  fail "Dockerfile mentions the answers, copies from sample/ or eval/, or bind-mounts the context"
 fi
 # Only scripts/ (this harness) and score.py may read the sample answers.
 sources=(selector.py)
@@ -84,7 +119,11 @@ if [ -d tests ]; then
   log "    $(tail -n 3 "$OUT/tests.log" | head -n 1)"
 fi
 
-make_var() { make --no-print-directory --eval "eval-print: ; @echo \$($1)" eval-print; }
+# SAMPLE is the Makefile's own name for the directory it mounts. Naming it on the
+# command line swaps the data and leaves every flag exactly as the Makefile has it.
+make_var() {
+  make --no-print-directory SAMPLE="$DATA" --eval "eval-print: ; @echo \$($1)" eval-print
+}
 IMAGE=$(make_var IMAGE)
 read -r -a RUN_FLAGS <<<"$(make_var RUN_FLAGS)"
 [ -n "$IMAGE" ] && [ "${#RUN_FLAGS[@]}" -gt 0 ] || fail "could not read IMAGE and RUN_FLAGS from the Makefile"
@@ -132,7 +171,7 @@ for run in $(seq 1 "$RUNS"); do
   [[ "$cpu_usec" =~ ^[0-9]+$ ]] || fail "run $run: no usage_usec in the container's cpu.stat"
   cpu=$(printf '%d.%06d' $((cpu_usec / 1000000)) $((cpu_usec % 1000000)))
 
-  python3 "$ROOT/score.py" "$ROOT/sample" "$ROOT/sample/answers.json" "$OUT/run$run.jsonl" \
+  python3 "$ROOT/score.py" "$DATA" "$ANSWERS" "$OUT/run$run.jsonl" \
     --cpu-seconds "$cpu" >"$OUT/run$run.score" 2>&1 || {
     cat "$OUT/run$run.score" >&2
     fail "run $run: $(head -n 1 "$OUT/run$run.score")"
@@ -142,7 +181,7 @@ done
 
 step "6/6 report"
 set +e
-python3 "$ROOT/scripts/eval_report.py" "$OUT" "$RUNS" | tee "$OUT/check.txt"
+python3 "$ROOT/scripts/eval_report.py" "$OUT" "$RUNS" "$DATA" "$ANSWERS" "$PREFIX" | tee "$OUT/check.txt"
 status=${PIPESTATUS[0]}
 set -e
 log "selector stderr of run 1: $OUT/run1.stderr"

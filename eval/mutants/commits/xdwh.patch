@@ -1,0 +1,13 @@
+diff --git a/tests/fixtures/optimizer/annotate_types.sql b/tests/fixtures/optimizer/annotate_types.sql
+index 5266c52..b197008 100644
+--- a/tests/fixtures/optimizer/annotate_types.sql
++++ b/tests/fixtures/optimizer/annotate_types.sql
+@@ -130,7 +130,7 @@ COALESCE(ARRAY(), ARRAY(1));
+ ARRAY<INT>;
+ 
+ COALESCE(ARRAY(), ARRAY(), ARRAY(1));
+-ARRAY<INT>;
++ARRAYINT>;
+ 
+ COALESCE(ARRAY(1), (ARRAY()));
+ ARRAY<INT>;

@@ -1,0 +1,13 @@
+diff --git a/sqlglot/generators/teradata.py b/sqlglot/generators/teradata.py
+index 6dbbf67..828595b 100644
+--- a/sqlglot/generators/teradata.py
++++ b/sqlglot/generators/teradata.py
+@@ -32,7 +32,7 @@ def _date_add_sql(
+             value = exp.Literal.string(value.this.to_py())
+         else:
+             kind_to_op = {"+": "+", "-": "-"}
+-            value.set("is_string", True)
++            value.set("is_string", False)
+ 
+         return f"{this} {kind_to_op[kind]} {self.sql(exp.Interval(this=value, unit=unit))}"
+ 

@@ -8,9 +8,9 @@ mounted read-only at /repo and a scratch directory at /out:
     label.py run --base N    the unmutated code, which has to come out clean
     label.py collect <dir>   gather the labels into <dir>/answers.json and labels.json
 
-A run copies the pinned checkout, makes the mutant's one-line edit as
-manifest.json describes it (not by applying the diff, so a badly written diff
-cannot hide; the edited file's sha256 must match the manifest), and runs the
+A run copies the pinned checkout, makes the mutant's edits as manifest.json
+describes them (not by applying the diff, so a badly written diff cannot hide;
+each edited file's sha256 must match the manifest), and runs the
 whole suite the way README.md says the organizers did: the lock file's
 packages, the checkout on PYTHONPATH, SKIP_INTEGRATION=0. pytest runs with
 -n 4, and a test that hangs is failed after TIMEOUT seconds.
@@ -41,23 +41,25 @@ PYTEST += ["--timeout", str(TIMEOUT), "--continue-on-collection-errors"]
 
 
 def edit(work: Path, entry: dict) -> None:
-    """Make the mutant's edit in the working copy and check the result against the manifest."""
-    path = work / entry["path"]
-    lines = path.read_bytes().split(b"\n")
-    index = entry["line"] - 1
-    new = entry["new"].encode("utf-8")
-    if entry["added"]:
-        lines.insert(index, new)
-    else:
-        if lines[index] != entry["old"].encode("utf-8"):
+    """Make the mutant's edits in the working copy and check each file against the manifest."""
+    for file in entry["files"]:
+        path = work / file["path"]
+        lines = path.read_bytes().split(b"\n")
+        # From the bottom up, so the line numbers above an edit still hold.
+        for change in sorted(file["edits"], key=lambda change: -change["line"]):
+            index = change["line"] - 1
+            old = [text.encode("utf-8") for text in change["old"]]
+            if lines[index : index + len(old)] != old:
+                raise SystemExit(
+                    f"{entry['id']}: {file['path']}:{change['line']} is not as recorded"
+                )
+            lines[index : index + len(old)] = [text.encode("utf-8") for text in change["new"]]
+        data = b"\n".join(lines)
+        if hashlib.sha256(data).hexdigest() != file["sha256"]:
             raise SystemExit(
-                f"{entry['id']}: line {entry['line']} of {entry['path']} is not as recorded"
+                f"{entry['id']}: the edited {file['path']} does not match the manifest"
             )
-        lines[index] = new
-    data = b"\n".join(lines)
-    if hashlib.sha256(data).hexdigest() != entry["sha256"]:
-        raise SystemExit(f"{entry['id']}: the edited {entry['path']} does not match the manifest")
-    path.write_bytes(data)
+        path.write_bytes(data)
 
 
 def run(options: argparse.Namespace) -> int:

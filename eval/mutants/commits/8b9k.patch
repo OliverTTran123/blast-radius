@@ -1,0 +1,12 @@
+diff --git a/sqlglot/anonymize.py b/sqlglot/anonymize.py
+index 9c23242..c132d77 100644
+--- a/sqlglot/anonymize.py
++++ b/sqlglot/anonymize.py
+@@ -10,7 +10,6 @@ from sqlglot.tokens import Token, TokenType
+ ALPHABET = string.ascii_lowercase
+ ALPHABET_SIZE = len(ALPHABET)
+ ANONYMIZED_TYPES = {
+-    TokenType.BIT_STRING,
+     TokenType.BYTE_STRING,
+     TokenType.HEX_STRING,
+     TokenType.HEREDOC_STRING,

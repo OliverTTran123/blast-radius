@@ -1,0 +1,13 @@
+diff --git a/sqlglot/generators/bigquery.py b/sqlglot/generators/bigquery.py
+index bb1a4c1..770d3f1 100644
+--- a/sqlglot/generators/bigquery.py
++++ b/sqlglot/generators/bigquery.py
+@@ -345,7 +345,7 @@ class BigQueryGenerator(generator.Generator):
+     JOIN_HINTS = False
+     QUERY_HINTS = False
+     TABLE_HINTS = False
+-    LIMIT_FETCH = "LIMIT"
++    LIMIT_FETCH = "LIMIT_"
+     RENAME_TABLE_WITH_DB = False
+     NVL2_SUPPORTED = False
+     UNNEST_WITH_ORDINALITY = False

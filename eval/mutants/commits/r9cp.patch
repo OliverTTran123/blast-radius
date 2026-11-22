@@ -1,0 +1,13 @@
+diff --git a/tests/dialects/test_clickhouse.py b/tests/dialects/test_clickhouse.py
+index 08c7113..4326e19 100644
+--- a/tests/dialects/test_clickhouse.py
++++ b/tests/dialects/test_clickhouse.py
+@@ -933,7 +933,7 @@ class TestClickhouse(Validator):
+             "ALTER TABLE t MODIFY COLUMN IF EXISTS c Int64",
+             "ALTER TABLE t ALTER COLUMN IF EXISTS c TYPE Int64",
+         )
+-        self.validate_identity("ALTER TABLE t ALTER COLUMN IF EXISTS c TYPE Int64")
++        self.validate_identity("ALTER TABLE t ALTER COLUMN IF EXISTS c TYPE Int64_")
+         self.validate_identity(
+             "ALTER TABLE t MODIFY COLUMN c REMOVE DEFAULT",
+             check_command_warning=True,

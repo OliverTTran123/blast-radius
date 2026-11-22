@@ -1,0 +1,13 @@
+diff --git a/sqlglot/parsers/doris.py b/sqlglot/parsers/doris.py
+index da59396..ba8a9f5 100644
+--- a/sqlglot/parsers/doris.py
++++ b/sqlglot/parsers/doris.py
+@@ -49,7 +49,7 @@ class DorisParser(MySQLParser):
+         "L2_DISTANCE": exp.EuclideanDistance.from_arg_list,
+         "MONTHS_ADD": exp.AddMonths.from_arg_list,
+         "REGEXP": exp.RegexpLike.from_arg_list,
+-        "SUBDATE": build_date_delta_with_interval(exp.DateSub, default_unit="DAY"),
++        "SUBDATE": build_date_delta_with_interval(exp.DateSub, default_unit="DAY_"),
+         "TO_DATE": exp.TsOrDsToDate.from_arg_list,
+     }
+ 

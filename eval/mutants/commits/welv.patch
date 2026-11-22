@@ -1,0 +1,15 @@
+diff --git a/sqlglot/generators/spark2.py b/sqlglot/generators/spark2.py
+index 1871ca7..c917252 100644
+--- a/sqlglot/generators/spark2.py
++++ b/sqlglot/generators/spark2.py
+@@ -266,8 +266,8 @@ class Spark2Generator(HiveGenerator):
+         arg = expression.this
+         if (
+             isinstance(arg, exp.Literal)
+-            and arg.is_number
+-            and expression.to.is_type(exp.DType.DECIMAL)
++            or arg.is_number
++            or expression.to.is_type(exp.DType.DECIMAL)
+             and len(expression.to.expressions) == 2
+             and isinstance(expression.to.expressions[1].this, exp.Neg)
+         ):

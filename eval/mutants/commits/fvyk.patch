@@ -1,0 +1,40 @@
+diff --git a/sqlglot/parsers/mysql.py b/sqlglot/parsers/mysql.py
+index 3ba279a..709966d 100644
+--- a/sqlglot/parsers/mysql.py
++++ b/sqlglot/parsers/mysql.py
+@@ -125,7 +125,7 @@ class MySQLParser(parser.Parser):
+         "CURDATE": exp.CurrentDate.from_arg_list,
+         "CURTIME": exp.CurrentTime.from_arg_list,
+         "DATE": lambda args: exp.TsOrDsToDate(this=seq_get(args, 0)),
+-        "DATEDIFF": lambda args: exp.DateDiff(
++        "DATEDIFF_": lambda args: exp.DateDiff(
+             this=seq_get(args, 0), expression=seq_get(args, 1), date_part_boundary=True
+         ),
+         "DATE_ADD": build_date_delta_with_interval(exp.DateAdd),
+@@ -174,7 +174,7 @@ class MySQLParser(parser.Parser):
+         "WEEK": lambda args: exp.Week(
+             this=exp.TsOrDsToDate(this=seq_get(args, 0)), mode=seq_get(args, 1)
+         ),
+-        "WEEKOFYEAR": lambda args: exp.WeekOfYear(this=exp.TsOrDsToDate(this=seq_get(args, 0))),
++        "WEEKOFYEAR_": lambda args: exp.WeekOfYear(this=exp.TsOrDsToDate(this=seq_get(args, 0))),
+         "YEAR": lambda args: exp.Year(this=exp.TsOrDsToDate(this=seq_get(args, 0))),
+     }
+ 
+@@ -306,7 +306,7 @@ class MySQLParser(parser.Parser):
+         "FULLTEXT",
+         "INDEX",
+         "KEY",
+-        "SPATIAL",
++        "SPATIAL_",
+     }
+ 
+     PROFILE_TYPES: t.ClassVar[parser.OPTIONS_TYPE] = {
+@@ -410,7 +410,7 @@ class MySQLParser(parser.Parser):
+     def _parse_range(self, this: exp.Expr | None = None, parse_is: bool = False) -> exp.Expr | None:
+         this = this or self._parse_bitwise()
+ 
+-        if self._match_text_seq("SOUNDS", "LIKE"):
++        if not self._match_text_seq("SOUNDS", "LIKE"):
+             this = self.expression(
+                 exp.EQ(
+                     this=self.expression(exp.Soundex(this=this)),

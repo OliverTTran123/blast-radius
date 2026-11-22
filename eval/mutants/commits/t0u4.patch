@@ -1,0 +1,25 @@
+diff --git a/sqlglot/generators/materialize.py b/sqlglot/generators/materialize.py
+index 0de54bf..62dd3e2 100644
+--- a/sqlglot/generators/materialize.py
++++ b/sqlglot/generators/materialize.py
+@@ -60,6 +60,6 @@ class MaterializeGenerator(PostgresGenerator):
+         return f"{self.normalize_func('LIST')}[{self.expressions(expression, flat=True)}]"
+ 
+     def tomap_sql(self, expression: exp.ToMap) -> str:
+-        if isinstance(expression.this, exp.Select):
++        if not isinstance(expression.this, exp.Select):
+             return self.func("MAP", expression.this)
+         return f"{self.normalize_func('MAP')}[{self.expressions(expression.this)}]"
+diff --git a/sqlglot/generators/singlestore.py b/sqlglot/generators/singlestore.py
+index 1220c30..99c9a20 100644
+--- a/sqlglot/generators/singlestore.py
++++ b/sqlglot/generators/singlestore.py
+@@ -613,7 +613,7 @@ class SingleStoreGenerator(MySQLGenerator):
+         "dense_rank",
+         "desc",
+         "describe",
+-        "detach",
++        "detach_",
+         "deterministic",
+         "dictionary",
+         "differential",

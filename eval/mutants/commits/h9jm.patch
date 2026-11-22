@@ -1,0 +1,12 @@
+diff --git a/sqlglot/parsers/snowflake.py b/sqlglot/parsers/snowflake.py
+index 493d1b7..7c7cb90 100644
+--- a/sqlglot/parsers/snowflake.py
++++ b/sqlglot/parsers/snowflake.py
+@@ -73,7 +73,6 @@ def _build_date_from_parts(args: list) -> exp.DateFromParts:
+ 
+ # Timestamp types used in _build_datetime
+ TIMESTAMP_TYPES = {
+-    exp.DType.TIMESTAMP: "TO_TIMESTAMP",
+     exp.DType.TIMESTAMPLTZ: "TO_TIMESTAMP_LTZ",
+     exp.DType.TIMESTAMPNTZ: "TO_TIMESTAMP_NTZ",
+     exp.DType.TIMESTAMPTZ: "TO_TIMESTAMP_TZ",

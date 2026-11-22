@@ -1,0 +1,13 @@
+diff --git a/sqlglot/parsers/singlestore.py b/sqlglot/parsers/singlestore.py
+index fa1b84c..0f453e9 100644
+--- a/sqlglot/parsers/singlestore.py
++++ b/sqlglot/parsers/singlestore.py
+@@ -88,7 +88,7 @@ class SingleStoreParser(MySQLParser):
+         "JSON_EXTRACT_DOUBLE": build_json_extract_path(exp.JSONExtractScalar, json_type="DOUBLE"),
+         "JSON_EXTRACT_BIGINT": build_json_extract_path(exp.JSONExtractScalar, json_type="BIGINT"),
+         "JSON_ARRAY_CONTAINS_STRING": lambda args: exp.JSONArrayContains(
+-            this=seq_get(args, 1),
++            this=seq_get(args, 2),
+             expression=seq_get(args, 0),
+             json_type="STRING",
+         ),

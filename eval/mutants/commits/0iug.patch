@@ -1,0 +1,12 @@
+diff --git a/sqlglot/generators/fabric.py b/sqlglot/generators/fabric.py
+index 3846b2c..c341b2f 100644
+--- a/sqlglot/generators/fabric.py
++++ b/sqlglot/generators/fabric.py
+@@ -57,7 +57,6 @@ class FabricGenerator(TSQLGenerator):
+         exp.DType.INT: "INT",
+         exp.DType.JSON: "VARCHAR(MAX)",
+         exp.DType.MONEY: "DECIMAL(19, 4)",
+-        exp.DType.NCHAR: "CHAR",
+         exp.DType.NVARCHAR: "VARCHAR",
+         exp.DType.ROWVERSION: "ROWVERSION",
+         exp.DType.SMALLDATETIME: "DATETIME2",

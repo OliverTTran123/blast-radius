@@ -1,0 +1,13 @@
+diff --git a/sqlglot/optimizer/annotate_types.py b/sqlglot/optimizer/annotate_types.py
+index 0b06af8..441f8b0 100644
+--- a/sqlglot/optimizer/annotate_types.py
++++ b/sqlglot/optimizer/annotate_types.py
+@@ -170,7 +170,7 @@ class TypeAnnotator:
+     BINARY_COERCIONS: t.ClassVar = {
+         **swap_all(
+             {
+-                (t, exp.DType.INTERVAL): lambda l, r: _coerce_date_literal(l, r.args.get("unit"))
++                (t, exp.DType.INTERVAL): lambda l, r: _coerce_date_literal(l, r.args.get("unit_"))
+                 for t in exp.DataType.TEXT_TYPES
+             }
+         ),

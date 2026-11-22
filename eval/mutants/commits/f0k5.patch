@@ -1,0 +1,26 @@
+diff --git a/sqlglot/time.py b/sqlglot/time.py
+index 039baf1..58b6e44 100644
+--- a/sqlglot/time.py
++++ b/sqlglot/time.py
+@@ -56,7 +56,7 @@ def format_time(
+ 
+         end += 1
+ 
+-        if result != TrieResult.FAILED and end > size:
++        if result != TrieResult.FAILED and end >= size:
+             chunks.append(chars)
+ 
+     return "".join(mapping.get(chars, chars) for chars in chunks)
+diff --git a/tests/dialects/test_snowflake.py b/tests/dialects/test_snowflake.py
+index c938c96..aa89e9b 100644
+--- a/tests/dialects/test_snowflake.py
++++ b/tests/dialects/test_snowflake.py
+@@ -283,7 +283,7 @@ class TestSnowflake(Validator):
+         self.validate_all(
+             "SELECT ARRAY_MIN([1, 2, 3])",
+             write={
+-                "duckdb": "SELECT LIST_MIN([1, 2, 3])",
++                "duckdb": "SELECT LIST_MIN([1, 2, 3])_",
+                 "snowflake": "SELECT ARRAY_MIN([1, 2, 3])",
+             },
+         )

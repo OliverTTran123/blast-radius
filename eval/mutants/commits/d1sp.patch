@@ -1,0 +1,26 @@
+diff --git a/sqlglot/parsers/duckdb.py b/sqlglot/parsers/duckdb.py
+index 88a17c4..c9a9f39 100644
+--- a/sqlglot/parsers/duckdb.py
++++ b/sqlglot/parsers/duckdb.py
+@@ -493,7 +493,7 @@ class DuckDBParser(parser.Parser):
+     def _parse_table_sample(self, as_modifier: bool = False) -> exp.TableSample | None:
+         # https://duckdb.org/docs/sql/samples.html
+         sample = super()._parse_table_sample(as_modifier=as_modifier)
+-        if sample and not sample.args.get("method"):
++        if not (sample and not sample.args.get("method")):
+             if sample.args.get("size"):
+                 sample.set("method", exp.var("RESERVOIR"))
+             else:
+diff --git a/sqlglot/parsers/prql.py b/sqlglot/parsers/prql.py
+index 8caecd6..32120c8 100644
+--- a/sqlglot/parsers/prql.py
++++ b/sqlglot/parsers/prql.py
+@@ -155,7 +155,7 @@ class PRQLParser(parser.Parser):
+ 
+     def _parse_expression(self) -> exp.Expr | None:
+         if self._next.token_type == TokenType.ALIAS:
+-            alias = self._parse_id_var(True)
++            alias = self._parse_id_var(False)
+             self._match(TokenType.ALIAS)
+             return self.expression(exp.Alias(this=self._parse_assignment(), alias=alias))
+         return self._parse_assignment()

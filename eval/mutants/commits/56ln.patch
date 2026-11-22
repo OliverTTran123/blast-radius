@@ -1,0 +1,13 @@
+diff --git a/sqlglot/dialects/duckdb.py b/sqlglot/dialects/duckdb.py
+index 9b28e54..aed4289 100644
+--- a/sqlglot/dialects/duckdb.py
++++ b/sqlglot/dialects/duckdb.py
+@@ -96,7 +96,7 @@ class DuckDB(Dialect):
+         NUMERIC_ESCAPES_ARE_BYTES = True
+         DROP_UNKNOWN_ESCAPES = True
+         BYTE_STRINGS = [("e'", "'"), ("E'", "'")]
+-        BYTE_STRING_ESCAPES = ["'", "\\"]
++        BYTE_STRING_ESCAPES = ["'", "\\_"]
+         HEREDOC_STRINGS = ["$"]
+ 
+         HEREDOC_TAG_IS_IDENTIFIER = True

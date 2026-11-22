@@ -1,0 +1,13 @@
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index 456314b..fe91776 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -1651,7 +1651,7 @@ class Parser:
+         TokenType.OFFSET: lambda self: ("offset", self._parse_offset()),
+         TokenType.FOR: lambda self: ("locks", self._parse_locks()),
+         TokenType.LOCK: lambda self: ("locks", self._parse_locks()),
+-        TokenType.TABLE_SAMPLE: lambda self: ("sample", self._parse_table_sample(as_modifier=True)),
++        TokenType.TABLE_SAMPLE: lambda self: ("sample", self._parse_table_sample(as_modifier=False)),
+         TokenType.USING: lambda self: ("sample", self._parse_table_sample(as_modifier=True)),
+         TokenType.CLUSTER_BY: lambda self: (
+             "cluster",

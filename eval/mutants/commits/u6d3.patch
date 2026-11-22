@@ -1,0 +1,26 @@
+diff --git a/sqlglot/dialects/athena.py b/sqlglot/dialects/athena.py
+index 6264066..828d190 100644
+--- a/sqlglot/dialects/athena.py
++++ b/sqlglot/dialects/athena.py
+@@ -137,7 +137,7 @@ def _tokenize_as_hive(tokens: list[Token]) -> bool:
+     second_text = second.text.upper()
+ 
+     if first_type in (TokenType.DESCRIBE, TokenType.SHOW) or first_text == "MSCK REPAIR":
+-        return True
++        return False
+ 
+     if first_type in (TokenType.ALTER, TokenType.CREATE, TokenType.DROP):
+         if second_text in ("DATABASE", "EXTERNAL", "SCHEMA"):
+diff --git a/sqlglot/executor/table.py b/sqlglot/executor/table.py
+index 68fbc3c..f62ef2f 100644
+--- a/sqlglot/executor/table.py
++++ b/sqlglot/executor/table.py
+@@ -85,7 +85,7 @@ class TableIter:
+ 
+     def __next__(self) -> RowReader:
+         self.index += 1
+-        if self.index < len(self.table):
++        if not self.index < len(self.table):
+             return self.table[self.index]
+         raise StopIteration
+ 

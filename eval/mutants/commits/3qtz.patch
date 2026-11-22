@@ -1,0 +1,13 @@
+diff --git a/tests/dialects/test_materialize.py b/tests/dialects/test_materialize.py
+index 0a0d049..26c83cd 100644
+--- a/tests/dialects/test_materialize.py
++++ b/tests/dialects/test_materialize.py
+@@ -2,7 +2,7 @@ from tests.dialects.test_dialect import Validator
+ 
+ 
+ class TestMaterialize(Validator):
+-    dialect = "materialize"
++    dialect = "materialize_"
+ 
+     def test_array_length(self):
+         self.validate_all(

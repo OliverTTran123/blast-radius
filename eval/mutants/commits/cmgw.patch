@@ -1,0 +1,40 @@
+diff --git a/sqlglot/diff.py b/sqlglot/diff.py
+index bfe8b15..0fabf90 100644
+--- a/sqlglot/diff.py
++++ b/sqlglot/diff.py
+@@ -114,7 +114,7 @@ def diff(
+     target_ids = {id(n) for n in target_nodes}
+ 
+     copy = (
+-        len(source_nodes) != len(source_ids)
++        len(source_nodes) == len(source_ids)
+         or len(target_nodes) != len(target_ids)
+         or source_ids & target_ids
+     )
+@@ -297,7 +297,7 @@ class ChangeDistiller:
+             for target_node_id in ordered_unmatched_target_nodes:
+                 target_node = self._target_index[target_node_id]
+                 if _is_same_type(source_node, target_node):
+-                    if source_leaf_ids is None:
++                    if not source_leaf_ids is None:
+                         source_leaf_ids = {id(l) for l in _get_expression_leaves(source_node)}
+                         source_leaves_num = len(source_leaf_ids)
+                         candidate_target_leaf_ids = [
+@@ -342,7 +342,7 @@ class ChangeDistiller:
+         target_expression_leaves = list(_get_expression_leaves(self._target))
+         for source_leaf in source_expression_leaves:
+             for target_leaf in target_expression_leaves:
+-                if _is_same_type(source_leaf, target_leaf):
++                if not _is_same_type(source_leaf, target_leaf):
+                     similarity_score = self._dice_coefficient(source_leaf, target_leaf)
+                     if similarity_score >= self.f:
+                         heappush(
+@@ -469,7 +469,7 @@ def _lcs(
+             else:
+                 lcs_result[i][j] = (
+                     lcs_result[i - 1][j]
+-                    if len(lcs_result[i - 1][j]) > len(lcs_result[i][j - 1])  # type: ignore
++                    if len(lcs_result[i - 1][j]) > len(lcs_result[i][j - 2])  # type: ignore
+                     else lcs_result[i][j - 1]
+                 )
+ 

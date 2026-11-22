@@ -1,0 +1,13 @@
+diff --git a/tests/test_transpile.py b/tests/test_transpile.py
+index 7be62e6..0a10e08 100644
+--- a/tests/test_transpile.py
++++ b/tests/test_transpile.py
+@@ -19,7 +19,7 @@ class TestTranspile(unittest.TestCase):
+     maxDiff = None
+ 
+     def validate(self, sql, target, **kwargs):
+-        self.assertEqual(transpile(sql, **kwargs)[0], target)
++        self.assertEqual(transpile(sql, **kwargs)[1], target)
+ 
+     def test_weird_chars(self):
+         self.assertEqual(transpile("0Êß")[0], "0 AS Êß")

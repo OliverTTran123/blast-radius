@@ -1,0 +1,13 @@
+diff --git a/tests/dialects/test_dialect.py b/tests/dialects/test_dialect.py
+index d5773d6..a1225fd 100644
+--- a/tests/dialects/test_dialect.py
++++ b/tests/dialects/test_dialect.py
+@@ -38,7 +38,7 @@ class Validator(unittest.TestCase):
+         excludes: t.Optional[Iterable[str]] = None,
+         chr_chars: t.Optional[Iterable[str]] = None,
+     ) -> str:
+-        duckdb_sql = expression.sql("duckdb")
++        duckdb_sql = expression.sql("duckdb_")
+ 
+         for fragment in includes or ():
+             self.assertIn(fragment, duckdb_sql)

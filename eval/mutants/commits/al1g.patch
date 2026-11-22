@@ -1,0 +1,13 @@
+diff --git a/sqlglot/expressions/core.py b/sqlglot/expressions/core.py
+index 2fc96ad..0d4b0ed 100644
+--- a/sqlglot/expressions/core.py
++++ b/sqlglot/expressions/core.py
+@@ -2532,7 +2532,7 @@ QUERY_MODIFIERS = {
+     "having": False,
+     "qualify": False,
+     "windows": False,
+-    "distribute": False,
++    "distribute_": False,
+     "sort": False,
+     "cluster": False,
+     "order": False,

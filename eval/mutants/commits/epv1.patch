@@ -1,0 +1,12 @@
+diff --git a/sqlglot/expressions/datatypes.py b/sqlglot/expressions/datatypes.py
+index 2697438..a207e9a 100644
+--- a/sqlglot/expressions/datatypes.py
++++ b/sqlglot/expressions/datatypes.py
+@@ -220,7 +220,6 @@ class DataType(Expression):
+         DType.CHAR,
+         DType.NCHAR,
+         DType.NVARCHAR,
+-        DType.TEXT,
+         DType.TINYTEXT,
+         DType.MEDIUMTEXT,
+         DType.LONGTEXT,

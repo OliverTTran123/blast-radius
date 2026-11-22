@@ -1,0 +1,13 @@
+diff --git a/tests/dialects/test_dialect.py b/tests/dialects/test_dialect.py
+index d5773d6..e50fb47 100644
+--- a/tests/dialects/test_dialect.py
++++ b/tests/dialects/test_dialect.py
+@@ -1416,7 +1416,7 @@ class TestDialect(Validator):
+             },
+         )
+         self.validate_all(
+-            "TS_OR_DS_ADD('2021-02-01', 1, 'DAY')",
++            "TS_OR_DS_ADD('2021-02-01', 1, 'DAY')_",
+             write={
+                 "drill": "DATE_ADD(CAST('2021-02-01' AS DATE), INTERVAL 1 DAY)",
+                 "duckdb": "CAST('2021-02-01' AS DATE) + INTERVAL 1 DAY",

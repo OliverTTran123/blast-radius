@@ -1,0 +1,13 @@
+diff --git a/sqlglot/expressions/constraints.py b/sqlglot/expressions/constraints.py
+index 984c334..415c84e 100644
+--- a/sqlglot/expressions/constraints.py
++++ b/sqlglot/expressions/constraints.py
+@@ -132,7 +132,7 @@ class IndexColumnConstraint(Expression, ColumnConstraintKind):
+         "index_type": False,
+         "options": False,
+         "expression": False,  # Clickhouse
+-        "granularity": False,
++        "granularity": True,
+     }
+ 
+ 

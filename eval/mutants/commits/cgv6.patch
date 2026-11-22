@@ -1,0 +1,20 @@
+diff --git a/sqlglot/generators/presto.py b/sqlglot/generators/presto.py
+index 5a0872a..fd1afae 100644
+--- a/sqlglot/generators/presto.py
++++ b/sqlglot/generators/presto.py
+@@ -283,12 +283,12 @@ class PrestoGenerator(generator.Generator):
+     TZ_TO_WITH_TIME_ZONE = True
+     NVL2_SUPPORTED = False
+     STRUCT_DELIMITER = ("(", ")")
+-    LIMIT_ONLY_LITERALS = True
+-    SUPPORTS_SINGLE_ARG_CONCAT = False
++    LIMIT_ONLY_LITERALS = False
++    SUPPORTS_SINGLE_ARG_CONCAT = True
+     LIKE_PROPERTY_INSIDE_SCHEMA = True
+     MULTI_ARG_DISTINCT = False
+     SUPPORTS_TO_NUMBER = False
+-    HEX_FUNC = "TO_HEX"
++    HEX_FUNC = "TO_HEX_"
+     PARSE_JSON_NAME: str | None = "JSON_PARSE"
+     PAD_FILL_PATTERN_IS_REQUIRED = True
+     EXCEPT_INTERSECT_SUPPORT_ALL_CLAUSE = False

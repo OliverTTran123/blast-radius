@@ -1,0 +1,156 @@
+{
+ "python": "3.13.18",
+ "tests": {
+  "tests/dialects/test_dialect.py::TestDialect::test_get_or_raise": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/dialects/test_dialect.py::TestDialect::test_lazy_load": [
+   "starts other processes (subprocess.Popen): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_dialect_entry_points.py::TestDialectEntryPoints::test_entry_point_plugin_discovery_legacy_api": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_dialect_entry_points.py::TestDialectEntryPoints::test_entry_point_plugin_discovery_modern_api": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_dialect_entry_points.py::TestDialectEntryPoints::test_entry_point_plugin_not_found": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_diff.py::TestDiff::test_dialect_aware_diff": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_executor.py::TestExecutor::test_array_slice": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_executor.py::TestExecutor::test_dpipe_source_dialect_coercion": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_executor.py::TestExecutor::test_execute_tpcds": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_executor.py::TestExecutor::test_execute_tpch": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_executor.py::TestExecutor::test_first": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_executor.py::TestExecutor::test_integer_division_floating_point": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_executor.py::TestExecutor::test_integer_division_truncates_towards_zero": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_executor.py::TestExecutor::test_nested_values": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_executor.py::TestExecutor::test_typed_division": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_expressions.py::TestExprs::test_convert": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_expressions.py::TestExprs::test_data_type_builder": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_expressions.py::TestExprs::test_eq_case_sensitive_text": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_expressions.py::TestExprs::test_is_type": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_expressions.py::TestExprs::test_ref_type_builder": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_expressions.py::TestExprs::test_table_name": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_expressions.py::TestExprs::test_transform_simple": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_generator.py::TestGenerator::test_generator_memory": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_generator.py::TestGenerator::test_time_slice_origin": [
+   "ran a statement that a test only reaches after other tests (the dialect registry)"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_canonicalize": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_canonicalize_internal_names": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_eliminate_ctes": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_eliminate_joins": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_eliminate_subqueries": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_isolate_table_selects": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_merge_subqueries": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_normalize": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_normalize_identifiers": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_optimize": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_optimize_joins": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_pushdown_cte_alias_columns": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_pushdown_predicates": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_pushdown_projection": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_qualify_columns": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_qualify_columns__with_invisible": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_qualify_tables": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_quote_identifiers": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_simplify": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_tpcds": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_tpch": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_optimizer.py::TestOptimizer::test_unnest_subqueries": [
+   "starts other processes (multiprocessing SpawnProcess): they load sqlglot from disk, where a patch made in memory does not show"
+  ],
+  "tests/test_sqlglotc.py::TestSQLGlotC::test_build_removes_obsolete_extensions": [
+   "fails on the unpatched code here: FileNotFoundError: [Errno 2] No such file or directory: '/app/pinned/sqlglotc/setup.py'"
+  ],
+  "tests/test_sqlglotc.py::TestSQLGlotC::test_dry_run_preserves_obsolete_extensions": [
+   "fails on the unpatched code here: FileNotFoundError: [Errno 2] No such file or directory: '/app/pinned/sqlglotc/setup.py'"
+  ],
+  "tests/test_sqlglotc.py::TestSQLGlotC::test_editable_install_removes_obsolete_extensions": [
+   "fails on the unpatched code here: FileNotFoundError: [Errno 2] No such file or directory: '/app/pinned/sqlglotc/setup.py'"
+  ],
+  "tests/test_typing.py::TestTyping::test_no_redundant_expression_metadata": [
+   "reads sqlglot source files as text, where a patch made in memory does not show"
+  ]
+ },
+ "what": "Tests the runner never judges by running them. Made by scripts/selfcheck.sh."
+}

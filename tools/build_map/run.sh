@@ -7,6 +7,9 @@
 # test alone and the whole suite once under coverage, and writes the compact
 # map the selector reads. About 30 minutes on a 22-thread machine.
 #
+# map/never_verify.json is not made here. It comes from running every test in
+# the scored image, so after a rebuild run scripts/selfcheck.sh to remake it.
+#
 # Raw records go to a Docker volume, not to the repo. An isolated pass skips
 # tests it already has a record for, so remove the volume to start clean:
 #

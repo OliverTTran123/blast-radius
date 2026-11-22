@@ -101,13 +101,15 @@ if grep -nEi 'answers|^[[:space:]]*(COPY|ADD)[[:space:]].*(sample|eval)|type=bin
   fail "Dockerfile mentions the answers, copies from sample/ or eval/, or bind-mounts the context"
 fi
 # Only scripts/ (this harness) and score.py may read the sample answers.
-sources=(selector.py)
+in_image=(selector.py)
+[ -f runner.py ] && in_image+=(runner.py)
+sources=("${in_image[@]}")
 [ -d tools ] && sources+=(tools)
 if grep -rnI 'answers\.json' "${sources[@]}" >&2; then
-  fail "selector.py or tools/ names the answers file"
+  fail "selector.py, runner.py or tools/ names the answers file"
 fi
-if grep -nE 'sample/|/sample' selector.py >&2; then
-  fail "selector.py refers to sample/; at run time it has only /data and its map"
+if grep -nE 'sample/|/sample|eval/' "${in_image[@]}" >&2; then
+  fail "a program in the image refers to sample/ or eval/; at run time it has only /data and its map"
 fi
 
 if [ -d tests ]; then

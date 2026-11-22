@@ -1,5 +1,9 @@
 {
  "chunks": {
+  "#classes": [
+   348824,
+   35550
+  ],
   "#opens": [
    0,
    1147
@@ -747,7 +751,7 @@
  },
  "format": 2,
  "set_bytes": 203,
- "sets": 6036,
+ "sets": 6984,
  "sources": {
   "sqlglot/__init__.py": [
    0,

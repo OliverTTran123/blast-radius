@@ -573,5 +573,112 @@ class TestWholeProgram(unittest.TestCase):
         self.assertIn("map could not be read", err.getvalue())
 
 
+CLASS_PATH = "sqlglot/klass.py"
+CLASS_SOURCE = """\
+class Base:
+    VALUE = 1
+
+    def run(self):
+        return self.VALUE
+
+
+class Child(Base):
+    pass
+"""
+CLASS_IDS = [
+    "tests/test_klass.py::T::test_uses_base",
+    "tests/test_klass.py::T::test_imports_only",
+]
+
+
+def build_class_map(directory: Path) -> None:
+    sets = assemble.SetTable()
+    hits = [
+        (0, mask([1, 2, 4, 5, 8, 9])),
+        (1, mask([1, 2, 4, 8, 9])),
+    ]
+    built = assemble.build_file(CLASS_SOURCE, hits, dict(hits), sets)["chunk"]
+    built.update(any_line=sets.add(0b11), readers=sets.add(0), no_test_context=[])
+    classes = {
+        "names": ["sqlglot.klass.Base", "sqlglot.klass.Child"],
+        "enum": [0, 0],
+        "meta": [0, 0],
+        "children": [[1], []],
+        "used": [sets.add(0b01), -1],
+        "where": {CLASS_PATH: {"2": 0, "4": 0, "9": 1}},
+    }
+    chunks = {
+        CLASS_PATH: assemble.pack(built),
+        "#tests": assemble.pack(CLASS_IDS),
+        "#opens": assemble.pack({}),
+        "#classes": assemble.pack(classes),
+    }
+    assemble.write_map(
+        directory, chunks, sets, len(CLASS_IDS), {}, {CLASS_PATH: CLASS_SOURCE.encode()}
+    )
+
+
+class TestClassBody(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.directory = tempfile.TemporaryDirectory()
+        cls.addClassCleanup(cls.directory.cleanup)
+        build_class_map(Path(cls.directory.name))
+        cls.selector = selector.Selector(cls.directory.name, tests_json(CLASS_IDS))
+
+    def select(self, text: str) -> set[int]:
+        with contextlib.redirect_stderr(io.StringIO()) as self.log:
+            return set(selector.bits(self.selector.select("c", text.encode("utf-8"))))
+
+    def edit(self, new_source: str) -> set[int]:
+        return self.select(patch(CLASS_PATH, CLASS_SOURCE, new_source))
+
+    def replaced(self, line: int, text: str) -> str:
+        lines = CLASS_SOURCE.splitlines(keepends=True)
+        lines[line - 1] = text + "\n"
+        return "".join(lines)
+
+    def test_class_attribute_keeps_the_users_when_the_check_passes(self):
+        self.selector.confirm = lambda commit, files, allowed: ""
+        self.assertEqual(self.edit(self.replaced(2, "    VALUE = 9")), {0})
+        self.assertIn("CLASS-KEEP", self.log.getvalue())
+        self.assertIn("sqlglot.klass.Base", self.log.getvalue())
+
+    def test_class_attribute_falls_back_when_the_check_fails(self):
+        self.selector.confirm = lambda commit, files, allowed: "differs m:sqlglot.klass:NAME"
+        self.assertEqual(self.edit(self.replaced(2, "    VALUE = 9")), {0, 1})
+        self.assertIn("CLASS-FALLBACK", self.log.getvalue())
+
+    def test_class_header_stays_at_file_level(self):
+        called: list[str] = []
+        self.selector.confirm = lambda commit, files, allowed: called.append(commit) or ""
+        self.assertEqual(self.edit(self.replaced(1, "class Base(object):")), {0, 1})
+        self.assertEqual(called, [])
+
+    def test_enum_body_stays_at_file_level(self):
+        self.selector.classes["enum"][0] = 1
+        called: list[str] = []
+        self.selector.confirm = lambda commit, files, allowed: called.append(commit) or ""
+        try:
+            self.assertEqual(self.edit(self.replaced(2, "    VALUE = 9")), {0, 1})
+            self.assertEqual(called, [])
+        finally:
+            self.selector.classes["enum"][0] = 0
+
+    def test_function_header_includes_tests_that_ran_the_body(self):
+        saved = self.selector.classes["used"][0]
+        self.selector.classes["used"][0] = -1
+        self.selector.confirm = lambda commit, files, allowed: ""
+        try:
+            self.assertEqual(self.edit(self.replaced(4, "    def run(self, extra=1):")), {0})
+        finally:
+            self.selector.classes["used"][0] = saved
+
+    def test_unused_class_body_selects_nothing_when_the_check_passes(self):
+        self.selector.confirm = lambda commit, files, allowed: ""
+        self.assertEqual(self.edit(self.replaced(9, "    other = 1")), set())
+        self.assertIn("CLASS-KEEP", self.log.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

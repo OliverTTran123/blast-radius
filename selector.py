@@ -21,10 +21,16 @@ How a changed path is handled:
                    - Otherwise each changed or deleted old line goes to the
                      innermost statement that owns it and selects the tests
                      that executed that statement. A statement that runs at
-                     import time (module level, a class body, a def header)
-                     selects every test that ran any line of the file, and so
-                     does a statement that some test only reaches after other
-                     tests have run. New lines inserted between two old lines,
+                     import time selects every test that ran any line of the
+                     file, and so does a statement that some test only reaches
+                     after other tests have run. One exception: a statement
+                     that sits directly in the body of an ordinary class
+                     (not an enum, not a metaclass) selects the tests that
+                     used that class or a subclass of it, plus the tests that
+                     executed the body of a function those lines belong to.
+                     That narrower set is kept only when a fresh import of the
+                     patched modules changes no value outside that class and
+                     its subclasses. New lines inserted between two old lines,
                      and old lines that hold no code, select for the code on
                      both sides. Tests that read the file as text are added.
   tests/**         Every test that opened or imported the file, and every test
@@ -44,9 +50,15 @@ import hashlib
 import json
 import os
 import re
+import subprocess
 import sys
 import warnings
 import zlib
+
+try:
+    import resource
+except ImportError:  # the scored run is Linux; Windows has no resource module
+    resource = None  # type: ignore[assignment]
 
 DATA = "/data"
 MAP = os.path.join(os.path.dirname(os.path.abspath(__file__)), "map")
@@ -352,6 +364,12 @@ class Selector:
         self.unmapped = sum(1 << position_of[test_id] for test_id in ids if test_id not in known)
         if self.unmapped:
             log(f"{len(bits(self.unmapped))} tests are not in the map and are always selected")
+        self.classes = self.map.chunk("#classes")
+        self.check_cpu: list[float] = []
+        self._pristine: dict | None = None
+        self._restore = 0
+        self._allowed: set[str] = set()
+        self._files: dict[str, str] = {}
 
     def tests(self, set_id: int) -> int:
         """A set from the map as a bit mask over this run's tests."""
@@ -381,12 +399,23 @@ class Selector:
         if changes is None:
             log(f"{commit}: every test: the patch holds {reason}")
             return self.everything
+        self._restore = 0
+        self._allowed = set()
+        self._files = {}
         selected = self.unmapped
         for change in changes:
             part = self.for_change(commit, change)
             if part is None:
                 return self.everything
             selected |= part
+        dropped = self._restore & ~selected
+        if self._allowed and dropped:
+            reason = self.confirm(commit, self._files, self._allowed)
+            if reason:
+                selected |= self._restore
+                log(f"CLASS-FALLBACK {commit} {reason}")
+            else:
+                log(f"CLASS-KEEP {commit} dropped {dropped.bit_count()}")
         return selected
 
     def for_change(self, commit: str, change: FileChange) -> int | None:
@@ -416,7 +445,7 @@ class Selector:
                     f"only the {readers.bit_count()} tests that read it as text"
                 )
                 return readers
-            return self.for_source(commit, path, source, change)
+            return self.for_source(commit, path, source, change, "\n".join(patched))
         if path.startswith("tests/"):
             if path not in self.opens:
                 log(f"{commit}: every test: no test is known to open {path}")
@@ -428,7 +457,7 @@ class Selector:
         return None
 
     def for_source(
-        self, commit: str, path: str, source: SourceFile, change: FileChange
+        self, commit: str, path: str, source: SourceFile, change: FileChange, patched: str
     ) -> int | None:
         last = max(change.removed + [below - 1 for _, below in change.inserted])
         if last > source.lines:
@@ -449,7 +478,25 @@ class Selector:
         for statement in sorted(statements):
             _, _, whole_file, set_id = source.statements[statement]
             where = f"{commit}: {path}:{statement}"
-            if whole_file:
+            class_id = self.class_at(path, statement) if whole_file == 1 else None
+            if class_id is not None:
+                users, allowed = self.family(class_id)
+                wide = self.tests(source.any_line)
+                narrow = (users | self.executed_inside(source, statement)) & wide
+                if narrow != wide:
+                    part = narrow
+                    self._restore |= wide
+                    self._allowed |= allowed
+                    self._files[path] = patched
+                    name = self.classes["names"][class_id]
+                    log(
+                        f"CLASS-NARROW {commit} {path}:{statement} {name} "
+                        f"{part.bit_count()} of {wide.bit_count()}"
+                    )
+                else:
+                    part = wide
+                    log(f"{where} runs at import: the {part.bit_count()} tests that ran the file")
+            elif whole_file:
                 part = self.tests(source.any_line)
                 why = "runs at import" if whole_file == 1 else "is only reached after other tests"
                 log(f"{where} {why}: the {part.bit_count()} tests that ran the file")
@@ -461,6 +508,106 @@ class Selector:
                 log(f"{where} was never executed by a test, selecting nothing")
             selected |= part
         return selected
+
+    def class_at(self, path: str, statement: int) -> int | None:
+        """The class whose body directly holds this statement, when it may be narrowed."""
+        classes = self.classes
+        if not classes:
+            return None
+        found = classes["where"].get(path, {}).get(str(statement))
+        if found is None or classes["enum"][found] or classes["meta"][found]:
+            return None
+        return found
+
+    def family(self, class_id: int) -> tuple[int, set[str]]:
+        """Tests that used this class or a subclass, and those classes' names."""
+        classes = self.classes
+        seen: set[int] = set()
+        stack = [class_id]
+        mask = 0
+        names: set[str] = set()
+        while stack:
+            current = stack.pop()
+            if current in seen:
+                continue
+            seen.add(current)
+            names.add(classes["names"][current])
+            mask |= self.tests(classes["used"][current])
+            stack.extend(classes["children"][current])
+        return mask, names
+
+    def executed_inside(self, source: SourceFile, statement: int) -> int:
+        """Tests that executed any statement inside this one."""
+        mask = 0
+        for start, (_end, _parent, flag, set_id) in source.statements.items():
+            if flag == 1 or set_id < 0:
+                continue
+            cursor = start
+            while cursor:
+                if cursor == statement:
+                    mask |= self.tests(set_id)
+                    break
+                cursor = source.statements[cursor][1]
+        return mask
+
+    def confirm(self, commit: str, files: dict[str, str], allowed: set[str]) -> str:
+        """Why a narrower class selection is unsafe, or "" when the import check passes."""
+        try:
+            if self._pristine is None:
+                self._pristine, cpu = self._fingerprint({}, apply=True)
+                log(f"CLASS-PRISTINE cpu={cpu:.3f}s")
+            patched, cpu = self._fingerprint(files, apply=True)
+        except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError) as error:
+            return f"fingerprint failed: {error}"
+        self.check_cpu.append(cpu)
+        log(f"CLASS-CHECK {commit} cpu={cpu:.3f}s")
+        return self.difference(self._pristine, patched, allowed)
+
+    def _fingerprint(self, files: dict[str, str], apply: bool) -> tuple[dict, float]:
+        before = resource.getrusage(resource.RUSAGE_CHILDREN) if resource is not None else None
+        environment = dict(os.environ)
+        environment["PYTHONHASHSEED"] = "0"
+        program = os.environ.get("BR_FINGERPRINT", "/app/fingerprint.py")
+        proc = subprocess.run(
+            [sys.executable, program],
+            input=json.dumps({"files": files, "apply": apply}).encode(),
+            capture_output=True,
+            timeout=120,
+            check=False,
+            env=environment,
+        )
+        if before is None:
+            cpu = 0.0
+        else:
+            after = resource.getrusage(resource.RUSAGE_CHILDREN)
+            cpu = (after.ru_utime + after.ru_stime) - (before.ru_utime + before.ru_stime)
+        if proc.returncode != 0:
+            tail = proc.stderr.decode("utf-8", "replace")[-200:]
+            return {"error": f"exit {proc.returncode}: {tail}"}, cpu
+        return json.loads(proc.stdout), cpu
+
+    @staticmethod
+    def difference(pristine: dict, patched: dict, allowed: set[str]) -> str:
+        """A reason the two fingerprints disagree outside the allowed classes."""
+        if "error" in pristine:
+            return f"pristine {pristine['error']}"
+        if "error" in patched:
+            return f"patched {patched['error']}"
+
+        def inside(key: str) -> bool:
+            if not key.startswith("c:"):
+                return False
+            rest = key[2:]
+            return any(rest == name or rest.startswith(name + ":") for name in allowed)
+
+        unknown = [key for key in pristine.get("unknown", []) + patched.get("unknown", []) if key]
+        if unknown:
+            return f"unknown {unknown[0]}"
+        keys = set(pristine.get("values", {})) | set(patched.get("values", {}))
+        for key in sorted(keys):
+            if pristine["values"].get(key) != patched["values"].get(key) and not inside(key):
+                return f"differs {key}"
+        return ""
 
     @staticmethod
     def around(source: SourceFile, above: int, below: int) -> list[int]:
@@ -557,6 +704,10 @@ def main() -> None:
         workers = splits[selected]
         answers.append(json.dumps({"commit": commit, "workers": workers}, separators=(",", ":")))
         log(f"{commit}: {sum(len(worker) for worker in workers)} tests in {len(workers)} workers")
+    if selector is not None and selector.check_cpu:
+        ordered = sorted(selector.check_cpu)
+        middle = ordered[len(ordered) // 2]
+        log(f"CLASS-CPU n={len(ordered)} median={middle:.3f}s")
     sys.stdout.write("".join(answer + "\n" for answer in answers))
 
 

@@ -23,7 +23,7 @@ RUN python /build/fetch_sqlglot.py "$SQLGLOT_COMMIT" /build/checkout \
  && python /build/check_pinned.py /build/checkout /app/pinned /app/map \
  && rm -rf /build/checkout /tmp/unpack
 
-COPY --chmod=644 selector.py runner.py /app/
+COPY --chmod=644 selector.py runner.py fingerprint.py /app/
 # README.md: the tests were labeled with this set, so the executor tests run.
 ENV SKIP_INTEGRATION=0
 CMD ["python", "/app/selector.py"]
